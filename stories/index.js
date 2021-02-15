@@ -27,10 +27,10 @@ storiesOf('Clock', module)
 
 storiesOf('TimePicker', module)
   .add('12 hours', () => (
-    <TimePicker mode='12h' onChange={action('onChange')} />
+    <TimePicker enableTimePicker={true} mode='12h' onChange={(data) => console.log('data onchange', data)} />
   ))
   .add('24 hours', () => (
-    <TimePicker mode='24h' onChange={action('onChange')} />
+    <TimePicker enableTimePicker={true} mode='24h' onChange={(data) => console.log('data onchange',data )} />
   ))
 
 storiesOf('TimeInput', module)
