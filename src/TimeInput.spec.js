@@ -6,7 +6,7 @@ import { unwrap } from '@material-ui/core/test-utils'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
 import TimeInput from './TimeInput'
-import TimePicker from './TimePicker'
+import DateTimePicker from './TimePicker'
 import Clock from './Clock'
 import * as testUtils from '../test/utils'
 
@@ -196,10 +196,10 @@ describe('<TimeInput />', () => {
 
   it('automatically opens when the openOnMount prop is true', () => {
     const tree = mount(<TimeInput />)
-    expect(tree.find(TimePicker).length).toBe(0)
+    expect(tree.find(DateTimePicker).length).toBe(0)
 
     const tree2 = mount(<TimeInput openOnMount />)
-    expect(tree2.find(TimePicker).length).toBe(1)
+    expect(tree2.find(DateTimePicker).length).toBe(1)
   })
 
   it('supports sending properties down to the time picker via TimePickerProps', () => {
@@ -208,7 +208,7 @@ describe('<TimeInput />', () => {
     }
 
     const tree = mount(<TimeInput TimePickerProps={TimePickerProps} openOnMount />)
-    expect(tree.find(TimePicker).prop('some')).toEqual('timePickerProp')
+    expect(tree.find(DateTimePicker).prop('some')).toEqual('timePickerProp')
   })
 
   it('supports sending properties down to the clock via ClockProps', () => {

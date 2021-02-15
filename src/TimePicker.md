@@ -12,7 +12,7 @@ initialState = { open: false };
     maxWidth='xs'
     open={state.open}
   >
-    <TimePicker mode='24h' />
+    <DateTimePicker mode='24h' />
     <DialogActions>
       <Button onClick={() => setState({ open: false })} color='primary'>
         Cancel

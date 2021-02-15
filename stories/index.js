@@ -5,7 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import Clock from '../src/Clock'
-import TimePicker from '../src/TimePicker'
+import DateTimePicker from '../src/TimePicker'
 import TimeInput from '../src/TimeInput'
 
 storiesOf('Clock', module)
@@ -25,12 +25,20 @@ storiesOf('Clock', module)
     </div>
   ))
 
-storiesOf('TimePicker', module)
+storiesOf('DateTimePicker', module)
   .add('12 hours', () => (
-    <TimePicker mode='12h' onChange={action('onChange')} />
+    <DateTimePicker
+      enableTimePicker={true}
+      onDateChange={(data) => console.log('data onchange', data)}
+      onChange={(data) => console.log('data onchange', data)}
+      />
   ))
   .add('24 hours', () => (
-    <TimePicker mode='24h' onChange={action('onChange')} />
+    <DateTimePicker
+      enableTimePicker={true}
+      onDateChange={(data) => console.log('data onchange', data)}
+      onChange={(data) => console.log('data onchange', data)}
+      />
   ))
 
 storiesOf('TimeInput', module)

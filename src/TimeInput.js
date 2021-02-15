@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Input from '@material-ui/core/Input'
 import { withStyles } from '@material-ui/core/styles'
-import TimePicker from './TimePicker'
+import DateTimePicker from './TimePicker'
 import { formatHours, twoDigits } from './util'
 
 const styles = {
@@ -120,7 +120,7 @@ class TimeInput extends React.Component {
           open={open}
           onClose={this.handleCancel}
         >
-          <TimePicker
+          <DateTimePicker
             {...TimePickerProps}
             mode={mode}
             value={newValue}
