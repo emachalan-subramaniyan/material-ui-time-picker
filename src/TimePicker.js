@@ -5,14 +5,14 @@ import { duration, easing } from '@material-ui/core/styles/transitions'
 import { getContrastRatio, fade } from '@material-ui/core/styles/colorManipulator'
 import Paper from '@material-ui/core/Paper';
 import classNames from 'classnames'
-import Clock from './Clock'
 import { formatHours, twoDigits } from './util';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Box from '@material-ui/core/Box';
 import TextField from '@material-ui/core/TextField';
 import {Event, AccessAlarm } from '@material-ui/icons';
-import { DateRangePicker, DateRange } from "materialui-daterange-picker";
+import { DateRangePicker } from "materialui-daterange-picker";
+import moment from 'moment';
 // import ChevronLeft from '@material-ui/icons/ChevronLeft';
 
 const styles = (theme) => ({
@@ -133,18 +133,34 @@ class DateTimePicker extends React.Component {
     const time = props.value || props.defaultValue || defaultValue
     this.state = {
       select: 'h',
-      starthours: time.getHours() % 12,
-      endhours: time.getHours() % 12,
+      starthours: this.getinitialState("time"),
+      endhours: this.getinitialState("time"),
       startminutes: time.getMinutes(),
       endminutes: time.getMinutes(),
-      startsession: time.getHours() >= 12 ? "PM" : "AM",
-      endsession: time.getHours() >= 12 ? "PM" : "AM",
+      startsession: this.getinitialState("session"),
+      endsession: this.getinitialState("session"),
       opendate: false,
       opentime: false,
       startdate: null,
       enddate: null,
       starttime: null,
       endtime: null,
+    }
+  }
+
+  getinitialState = (data) => {
+    if(data === "time"){
+      if(this.props.restrictTime){
+        return this.props.restrictTime.starttime
+      }else{
+        return parseInt(this.props.timemode) === 12 ? time.getHours() % 12 : new Date().getHours()
+      }
+    }else{
+      if(this.props.restrictTime){
+        return this.props.restrictTime.starttime >= 12 ? "PM" : "AM";
+      }else{
+        return parseInt(this.props.timemode) === 12 && time.getHours() >= 12 ? "PM" : "AM"
+      }
     }
   }
 
@@ -203,9 +219,31 @@ class DateTimePicker extends React.Component {
 
   setPm = (data) => {
     if (data === "start") {
-      this.setState({ startsession: this.state.startsession === "PM" ? "AM" : "PM" }, this.propagateChange)
+      if(this.state.startsession === 'PM'){
+        this.setState({
+          startsession: "AM",
+          starthours: this.props.restrictTime ? this.props.restrictTime.starttime : this.state.starthours,
+          endhours: this.props.restrictTime ? this.props.restrictTime.starttime : this.state.starthours,
+          endminutes: this.state.startminutes,
+          endsession: "AM",
+        }, this.propagateChange);
+      }else{
+        this.setState({
+          startsession: "PM",
+          starthours: this.props.restrictTime && this.props.restrictTime.endtime ? Number(this.props.restrictTime.endtime) - 1 : this.state.starthours,
+          startminutes: 59,
+          endhours: this.props.restrictTime && this.props.restrictTime.endtime ? Number(this.props.restrictTime.endtime) - 1 : this.state.starthours,
+          endminutes: 59,
+          endsession: "PM",
+        }, this.propagateChange);
+      }
     }else{
-      this.setState({ endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange)
+      this.setState({ endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange);
+      // if(this.state.endsession === 'PM' && this.state.starthours < this.state.endhours){
+        
+      // }else{
+      // }
+
     }
   }
 
@@ -228,9 +266,14 @@ class DateTimePicker extends React.Component {
 
   onHandleUpPress = (data, part) => {
     if(data === 'start' && part === 'hours'){
-      this.setState({starthours: this.state.starthours + 1}, this.propagateChange)
+      this.setState({
+        starthours: this.state.starthours + 1,
+        endhours: this.state.starthours + 1,
+        endminutes: this.state.startminutes,
+        endsession: this.state.startsession
+      }, this.propagateChange)
     }else if(data === 'start' && part === 'minutes'){
-      this.setState({startminutes: this.state.startminutes + 1}, this.propagateChange)
+      this.setState({startminutes: this.state.startminutes + 1, endminutes: this.state.startminutes + 1}, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
       this.setState({endhours: this.state.endhours + 1}, this.propagateChange)
     }else if(data === "end" && part === 'minutes'){
@@ -240,13 +283,40 @@ class DateTimePicker extends React.Component {
 
   onHandleDownPress = (data, part) => {
     if(data === 'start' && part === 'hours'){
-      this.setState({starthours: this.state.starthours - 1}, this.propagateChange)
+      if(this.props.restrictToDayTime && this.state.startsession === "AM" && this.props.restrictTime && this.state.starthours - 1 < this.props.restrictTime.starttime ){
+        // console.log('yes happen');
+      }else{
+        // console.log('start hour', this.state.starthours -1 );
+        this.setState({
+          starthours: this.state.starthours - 1,
+          endhours: this.state.starthours - 1,
+          endminutes: this.state.startminutes,
+          endsession: this.state.startsession
+        }, this.propagateChange)
+      }
     }else if(data === 'start' && part === 'minutes'){
-      this.setState({startminutes: this.state.startminutes - 1}, this.propagateChange)
+      this.setState({
+        startminutes: this.state.startminutes - 1,
+        endhours: this.state.starthours,
+        endminutes: this.state.startminutes - 1,
+        endsession: this.state.startsession
+      }, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
-      this.setState({endhours: this.state.endhours - 1}, this.propagateChange)
+      // console.log('this.state.starthours', this.state.starthours, this.state.endhours);
+      if(this.state.startsession === this.state.endsession && this.state.starthours >= this.state.endhours){
+        // console.log('yes end happen');
+      }else{
+        this.setState({
+          endhours: this.state.endhours - 1,
+          endminutes: this.state.startminutes
+        }, this.propagateChange)
+      }
     }else if(data === "end" && part === 'minutes'){
-      this.setState({endminutes: this.state.endminutes - 1}, this.propagateChange)
+      if(this.state.startsession === this.state.endsession && this.state.starthours === this.state.endhours && this.state.startminutes >= this.state.endminutes){
+        // console.log('yes end happen');
+      }else{
+        this.setState({endminutes: this.state.endminutes - 1}, this.propagateChange)
+      }
     }
   }
 
@@ -278,57 +348,72 @@ class DateTimePicker extends React.Component {
 
 
   onDateChange = (data) => {
-    this.setState({startdate: data.startDate.toLocaleDateString(), enddate: data.endDate.toLocaleDateString()});
+    this.setState({
+      startdate: moment(data.startDate).format(this.props.dateFormat),
+      enddate: moment(data.endDate).format(this.props.dateFormat),
+    });
     this.props.onDateChange(data);
-    this.setState({ opendate: !this.state.opendate, opentime: false});
+    this.setState({ opendate: !this.state.opendate, opentime: false, starttime: null, endtime: null});
   }
 
   propagateChange = () => {
     const {starthours, startminutes, startsession, endhours, endminutes, endsession} = this.state;
-    this.setState({
-      starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)} ${startsession}`,
-      endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}`
-    })
-    if (this.props.onChange != null) {
-      const date = {
-      starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)} ${startsession}`,
-      endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}`
+    if(parseInt(this.props.timemode) === 12){
+      this.setState({
+        starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)} ${startsession}`,
+        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}`
+      })
+      if (this.props.onChange != null) {
+        const date = {
+        starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)} ${startsession}`,
+        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}`
+        }
+        this.props.onChange(date)
       }
-      this.props.onChange(date)
+    }else{
+      this.setState({
+        starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)}`,
+        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)}`
+      })
+      if (this.props.onChange != null) {
+        const date = {
+        starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)}`,
+        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)}`
+        }
+        this.props.onChange(date)
+      }
     }
   }
 
   render () {
     const {
       classes,
-      ClockProps
     } = this.props
-    const {  isPm } = formatHours(this.state.hours, '12')
-
+    const {  isPm } = formatHours(this.state.hours, '12');
     return (
       <div className={classes.root}>
         <Box borderRadius="2%" border={1} className={classes.box_style}>
           <div className={classes.textinput_style}>
             <TextField
               id="startdatetime"
-              label={ this.state.startdate === null && "Start Date & Time"}
+              label={ this.state.startdate === null && this.props.startPlaceholder && this.props.startPlaceholder}
               value={this.state.startdate && this.state.starttime ?
                 this.state.startdate + ' ' + this.state.starttime :
                 this.state.startdate && this.state.starttime === null ? this.state.startdate : null}
             />
             <Event onClick={() => this.onDateIconClick()} />
-            {this.props.enableTimePicker && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
+            {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
           </div>
           <div className={classes.textinput_style}>
             <TextField
               id="enddatetime"
-              label={this.state.enddate === null && "End Date & Time"}
+              label={this.state.enddate === null && this.props.endPlaceholder && this.props.endPlaceholder}
               value={this.state.enddate && this.state.endtime ?
                 this.state.enddate + ' ' + this.state.endtime :
                 this.state.enddate && this.state.endtime === null ? this.state.enddate : null}
             />
             <Event onClick={() => this.onDateIconClick()} />
-            {this.props.enableTimePicker && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
+            {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
           </div>
         </Box>
         <div>
@@ -339,7 +424,7 @@ class DateTimePicker extends React.Component {
             onChange={(range) => this.onDateChange(range)}
           />
         </div>
-        {this.props.enableTimePicker && this.state.opentime && <div className={classes.timecon_style}>
+        {this.props.includeTime && this.state.opentime && <div className={classes.timecon_style}>
           <Paper elevation={3} className={classes.paper_con}>
           <Typography variant="body2" align="center" className={classes.header_title}>
             Start Time
@@ -359,7 +444,9 @@ class DateTimePicker extends React.Component {
             <Typography align="center">
               Hours
             </Typography>
-            <svg onClick={() => this.state.starthours <= 11 && this.onHandleUpPress("start", "hours")}xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            <svg
+              onClick={() => this.state.starthours < parseInt(this.props.timemode) - 1 && this.onHandleUpPress("start", "hours")}
+              xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                id="up" size="16" color="currentColor" viewBox="0 0 24 24" className={classes.icon_style}>
               <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
               <path d="M0 0h24v24H0z" fill="none"></path>
@@ -397,7 +484,7 @@ class DateTimePicker extends React.Component {
                 <path fill="none" d="M0 0h24v24H0V0z"></path>
               </svg>
             </div>:
-              <div className={classes.time_con}>
+            {parseInt(this.props.timemode) === 12 && <div className={classes.time_con}>
                 <Typography align="center">
                 AM/PM
               </Typography>
@@ -419,7 +506,7 @@ class DateTimePicker extends React.Component {
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
                 <path fill="none" d="M0 0h24v24H0V0z"></path>
               </svg>
-              </div>
+              </div>}
               </div>
         </Paper>
         <Paper elevation={3} className={classes.paper_con}>
@@ -441,7 +528,7 @@ class DateTimePicker extends React.Component {
             <Typography align="center">
               Hours
             </Typography>
-            <svg onClick={() => this.state.endhours <= 11 && this.onHandleUpPress("end", "hours")}xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+            <svg onClick={() => this.state.endhours < parseInt(this.props.timemode) - 1 && this.onHandleUpPress("end", "hours")}xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                id="up" size="16" color="currentColor" viewBox="0 0 24 24" className={classes.icon_style}>
               <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path>
               <path d="M0 0h24v24H0z" fill="none"></path>
@@ -479,7 +566,7 @@ class DateTimePicker extends React.Component {
                 <path fill="none" d="M0 0h24v24H0V0z"></path>
               </svg>
             </div>:
-              <div className={classes.time_con}>
+            {parseInt(this.props.timemode) === 12 && <div className={classes.time_con}>
               <Typography align="center">
                 AM/PM
               </Typography>
@@ -501,7 +588,7 @@ class DateTimePicker extends React.Component {
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
                 <path fill="none" d="M0 0h24v24H0V0z"></path>
               </svg>
-              </div>
+              </div>}
               </div>
       </Paper></div> }
       </div>

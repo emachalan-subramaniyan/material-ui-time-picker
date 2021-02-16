@@ -28,16 +28,28 @@ storiesOf('Clock', module)
 storiesOf('DateTimePicker', module)
   .add('12 hours', () => (
     <DateTimePicker
-      enableTimePicker={true}
+      includeTime={true} 
+      startPlaceholder={"Start Date & Time"}
+      endPlaceholder={"End Date & Time"}
+      restrictToDayTime={true}
+      timemode="12h"
+      restrictTime={{starttime: 10, endtime: 5}}
+      dateFormat={'DD/MM/YYYY'}
       onDateChange={(data) => console.log('data onchange', data)}
-      onChange={(data) => console.log('data onchange', data)}
+      onChange={(data) => console.log('change', data)}
       />
   ))
   .add('24 hours', () => (
     <DateTimePicker
-      enableTimePicker={true}
+      includeTime={true} 
+      startPlaceholder={"Start Date & Time"}
+      endPlaceholder={"End Date & Time"}
+      restrictToDayTime={true}
+      timemode="24h"
+      restrictTime={{starttime: 10, endtime: 5}}
+      dateFormat={'YYYY/DD/MM'}
       onDateChange={(data) => console.log('data onchange', data)}
-      onChange={(data) => console.log('data onchange', data)}
+      onChange={(data) => console.log('change', data)}
       />
   ))
 
