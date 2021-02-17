@@ -13,6 +13,7 @@ import TextField from '@material-ui/core/TextField';
 import {Event, AccessAlarm } from '@material-ui/icons';
 import { DateRangePicker } from "materialui-daterange-picker";
 import moment from 'moment';
+import DateRangePickerExporter from './components/DateRangePickerExporter';
 // import ChevronLeft from '@material-ui/icons/ChevronLeft';
 
 const styles = (theme) => ({
@@ -149,6 +150,10 @@ class DateTimePicker extends React.Component {
   }
 
   getinitialState = (data) => {
+    const defaultValue = new Date()
+    defaultValue.setSeconds(0)
+    defaultValue.setMilliseconds(0)
+    const time = this.props.value || this.props.defaultValue || defaultValue
     if(data === "time"){
       if(this.props.restrictTime){
         return this.props.restrictTime.starttime
@@ -238,11 +243,11 @@ class DateTimePicker extends React.Component {
         }, this.propagateChange);
       }
     }else{
-      this.setState({ endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange);
-      // if(this.state.endsession === 'PM' && this.state.starthours < this.state.endhours){
-        
-      // }else{
-      // }
+      if(this.props.restrictTime && this.state.endsession === 'AM' && this.state.starthours <= this.state.endhours){
+        this.setState({endhours: this.props.restrictTime.endtime - 1, endsession: "PM"})
+      }else{
+        this.setState({ endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange);
+      }
 
     }
   }
@@ -275,7 +280,13 @@ class DateTimePicker extends React.Component {
     }else if(data === 'start' && part === 'minutes'){
       this.setState({startminutes: this.state.startminutes + 1, endminutes: this.state.startminutes + 1}, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
-      this.setState({endhours: this.state.endhours + 1}, this.propagateChange)
+      if(this.state.endsession === 'PM' &&
+        this.props.restrictToDayTime && this.props.restrictTime &&
+        this.props.restrictTime.endtime > this.state.endhours){
+
+        }else{
+        this.setState({endhours: this.state.endhours + 1}, this.propagateChange)
+        }
     }else if(data === "end" && part === 'minutes'){
       this.setState({endminutes: this.state.endminutes + 1}, this.propagateChange)
     }
@@ -283,8 +294,10 @@ class DateTimePicker extends React.Component {
 
   onHandleDownPress = (data, part) => {
     if(data === 'start' && part === 'hours'){
-      if(this.props.restrictToDayTime && this.state.startsession === "AM" && this.props.restrictTime && this.state.starthours - 1 < this.props.restrictTime.starttime ){
+      if(this.props.restrictToDayTime && this.state.startdate === this.state.enddate && this.state.startsession === "AM" && this.props.restrictTime && this.state.starthours - 1 < this.props.restrictTime.starttime ){
         // console.log('yes happen');
+      }else if(this.props.restrictToDayTime && this.props.restrictTime && this.props.restrictTime.starttime >= this.state.starthours){
+        // console.log('yes u got it');
       }else{
         // console.log('start hour', this.state.starthours -1 );
         this.setState({
@@ -303,7 +316,7 @@ class DateTimePicker extends React.Component {
       }, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
       // console.log('this.state.starthours', this.state.starthours, this.state.endhours);
-      if(this.state.startsession === this.state.endsession && this.state.starthours >= this.state.endhours){
+      if(this.state.startdate === this.state.enddate && this.state.startsession === this.state.endsession && this.state.starthours >= this.state.endhours){
         // console.log('yes end happen');
       }else{
         this.setState({
@@ -312,7 +325,7 @@ class DateTimePicker extends React.Component {
         }, this.propagateChange)
       }
     }else if(data === "end" && part === 'minutes'){
-      if(this.state.startsession === this.state.endsession && this.state.starthours === this.state.endhours && this.state.startminutes >= this.state.endminutes){
+      if(this.state.startdate === this.state.enddate && this.state.startsession === this.state.endsession && this.state.starthours === this.state.endhours && this.state.startminutes >= this.state.endminutes){
         // console.log('yes end happen');
       }else{
         this.setState({endminutes: this.state.endminutes - 1}, this.propagateChange)
@@ -417,10 +430,13 @@ class DateTimePicker extends React.Component {
           </div>
         </Box>
         <div>
-          <DateRangePicker
+          <DateRangePickerExporter
             open={this.state.opendate}
             closeOnClickOutside
             toggle={this.toggle}
+            maxNext={this.props.maxNext}
+            maxPrev={this.props.maxPrev}
+            restrictDays={this.props.restrictDays}
             onChange={(range) => this.onDateChange(range)}
           />
         </div>
@@ -483,7 +499,8 @@ class DateTimePicker extends React.Component {
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
                 <path fill="none" d="M0 0h24v24H0V0z"></path>
               </svg>
-            </div>:
+            </div>
+            {parseInt(this.props.timemode) === 12 && ":" }
             {parseInt(this.props.timemode) === 12 && <div className={classes.time_con}>
                 <Typography align="center">
                 AM/PM
@@ -565,7 +582,8 @@ class DateTimePicker extends React.Component {
                 <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"></path>
                 <path fill="none" d="M0 0h24v24H0V0z"></path>
               </svg>
-            </div>:
+            </div>
+            {parseInt(this.props.timemode) === 12 && ":" }
             {parseInt(this.props.timemode) === 12 && <div className={classes.time_con}>
               <Typography align="center">
                 AM/PM

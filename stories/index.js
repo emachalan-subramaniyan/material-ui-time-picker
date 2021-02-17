@@ -34,6 +34,8 @@ storiesOf('DateTimePicker', module)
       restrictToDayTime={true}
       timemode="12h"
       restrictTime={{starttime: 10, endtime: 5}}
+      maxPrev={5}
+      maxNext={2}
       dateFormat={'DD/MM/YYYY'}
       onDateChange={(data) => console.log('data onchange', data)}
       onChange={(data) => console.log('change', data)}
@@ -47,6 +49,7 @@ storiesOf('DateTimePicker', module)
       restrictToDayTime={true}
       timemode="24h"
       restrictTime={{starttime: 10, endtime: 5}}
+      restrictDays={{firstday: 'Mo', lastday: "Th"}}
       dateFormat={'YYYY/DD/MM'}
       onDateChange={(data) => console.log('data onchange', data)}
       onChange={(data) => console.log('change', data)}
