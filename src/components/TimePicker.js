@@ -93,7 +93,11 @@ class TimePicker extends React.Component {
     const time = this.props.value || this.props.defaultValue || defaultValue
     if(data === "time"){
       if(this.props.timemode && parseInt(this.props.timemode) === 24){
-        return time.getHours();
+        if(this.props.restrictTime && this.props.restrictTime.starttime > time.getHours()){
+          return this.props.restrictTime.starttime
+        }else{
+          return time.getHours();
+        }
       }else if(this.props.restrictTime){
         return this.props.restrictTime.starttime
       }else{

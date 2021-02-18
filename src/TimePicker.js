@@ -23,13 +23,25 @@ const styles = (theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     display: 'flex',
-    marginRight: '20px',
-    marginLeft: '20px',
+    marginRight: '70px',
+    marginLeft: '30px',
+    marginBottom: '5px',
+    height: '40px'
+  },
+  textinput1_style: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+    marginRight: '30px',
+    marginLeft: '30px',
     marginBottom: '5px'
   },
   timecon_style: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  text_con: {
+    // height: 40
   }
 })
 
@@ -81,13 +93,14 @@ class DateTimePicker extends React.Component {
       <div className={classes.root}>
         <Box borderRadius="2%" border={1} className={classes.box_style}>
           <Grid container direction="row" justify="center" wrap="wrap">
-            <div className={classes.textinput_style}>
+            <div className={this.state.opentime ? classes.textinput1_style : classes.textinput_style}>
               <TextField
                 id="startdatetime"
+                className={classes.text_con}
                 label={ this.state.startdate === null && this.props.startPlaceholder && this.props.startPlaceholder}
                 value={this.state.startdate && this.state.starttime ?
                   this.state.startdate + ' ' + this.state.starttime :
-                  this.state.startdate && this.state.starttime === null ? this.state.startdate : null}
+                  this.state.startdate && this.state.starttime === null ? this.state.startdate : undefined}
               />
               <Event onClick={() => this.onDateIconClick()} />
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
@@ -98,7 +111,7 @@ class DateTimePicker extends React.Component {
                 label={this.state.enddate === null && this.props.endPlaceholder && this.props.endPlaceholder}
                 value={this.state.enddate && this.state.endtime ?
                   this.state.enddate + ' ' + this.state.endtime :
-                  this.state.enddate && this.state.endtime === null ? this.state.enddate : null}
+                  this.state.enddate && this.state.endtime === null ? this.state.enddate : undefined}
               />
               <Event onClick={() => this.onDateIconClick()} />
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}

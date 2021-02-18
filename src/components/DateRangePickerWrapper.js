@@ -6,7 +6,8 @@ import DateRangePicker from './DateRangePicker';
 
 const useStyles = makeStyles(() => ({
   dateRangePickerContainer: {
-    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center'
   },
   dateRangePicker: {
     position: 'relative',
