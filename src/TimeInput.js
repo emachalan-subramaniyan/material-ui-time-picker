@@ -1,10 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import Button from '@material-ui/core/Button'
-import Input from '@material-ui/core/Input'
-import { withStyles } from '@material-ui/core/styles'
+import { Dialog, DialogActions, Button, Input, withStyles}from '@material-ui/core';
 import DateTimePicker from './TimePicker'
 import { formatHours, twoDigits } from './util'
 

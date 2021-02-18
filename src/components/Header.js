@@ -4,6 +4,7 @@ import {
   IconButton,
   Select,
   MenuItem,
+  Typography
 } from '@material-ui/core';
 import React from 'react';
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
@@ -56,11 +57,14 @@ const Header = ({
   prevDisabled,
   onClickNext,
   onClickPrevious,
+  marker,
+  monthSelClick,
 }) => {
   const classes = useStyles();
 
   const handleMonthChange = (event) => {
-    setDate(setMonth(date, parseInt(event.target.value)));
+    // setDate(setMonth(date, parseInt(event.target.value)));
+    monthSelClick(event)
   };
 
   const handleYearChange = (event) => {
@@ -79,7 +83,10 @@ const Header = ({
         </IconButton>
       </Grid>
       <Grid item>
-        <Select
+        <Typography onClick={() => monthSelClick(marker)}>
+          {MONTHS[getMonth(date)]}
+        </Typography>
+        {/* <Select
           value={getMonth(date)}
           onChange={(e) => handleMonthChange(e)}
           MenuProps={{ disablePortal: true }}
@@ -89,10 +96,13 @@ const Header = ({
               {month}
             </MenuItem>
           ))}
-        </Select>
+        </Select> */}
       </Grid>
 
       <Grid item>
+        {/* <Typography>
+          {getYear(date)}
+        </Typography> */}
         <Select
           value={getYear(date)}
           onChange={(e) => handleYearChange(e)}

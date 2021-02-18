@@ -1,0 +1,70 @@
+import * as React from 'react';
+import classNames from 'classnames';
+import { makeStyles } from '@material-ui/core';
+
+import TimePicker from './TimePicker';
+
+const useStyles = makeStyles(() => ({
+  dateRangePickerContainer: {
+    position: 'relative',
+  },
+  dateRangePicker: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  dateRangeBackdrop: {
+    position: 'fixed',
+    height: '100vh',
+    width: '100vw',
+    bottom: 0,
+    zIndex: 0,
+    right: 0,
+    left: 0,
+    top: 0,
+  },
+}));
+
+const TimePickerWrapper = (
+  props
+) => {
+  const classes = useStyles();
+
+  const {
+    closeOnClickTimeOutside,
+    wrapperClassName,
+    timetoggle,
+    opentime,
+  } = props;
+
+  const handleToggle = () => {
+    if (closeOnClickTimeOutside === false) {
+      return;
+    }
+
+    timetoggle();
+  };
+
+  const handleKeyPress = (event) => event && event.key === 'Escape' && handleToggle();
+
+  const wrapperClasses = classNames(classes.dateRangePicker, wrapperClassName);
+
+  return (
+    <div className={classes.dateRangePickerContainer}>
+      {
+        opentime && (
+          <div
+            className={classes.dateRangeBackdrop}
+            onKeyPress={handleKeyPress}
+            onClick={handleToggle}
+          />
+        )
+      }
+
+      <div className={wrapperClasses}>
+        <TimePicker {...props} />
+      </div>
+    </div>
+  );
+};
+
+export default TimePickerWrapper;

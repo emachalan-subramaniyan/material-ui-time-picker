@@ -4,8 +4,11 @@ import {
   Grid,
   Typography,
   makeStyles,
+  Box
 } from '@material-ui/core';
 import {
+  setMonth,
+  getMonth,
   getDate,
   isSameMonth,
   isToday,
@@ -28,10 +31,25 @@ const NavigationAction = {
   Next: 1
 }
 
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'June',
+  'July',
+  'Aug',
+  'Sept',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
 
 const WEEK_DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: 290,
   },
@@ -47,11 +65,22 @@ const useStyles = makeStyles(() => ({
     marginTop: 15,
     marginBottom: 20,
   },
+  month_style: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: "center",
+    width: 20,
+    marginLeft: 5,
+    marginRight: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    cursor: 'pointer'
+  }
 }));
 
 const Month = (props) => {
   const classes = useStyles();
-
+  const[monthClicked, setmonthClicked] = React.useState(null)
   const {
     helpers,
     handlers,
@@ -66,8 +95,12 @@ const Month = (props) => {
     restrictDays,
   } = props;
 
+  const onMonthClick = (data) => {
+    setDate(setMonth(date, data));
+    setmonthClicked(null);
+  }
+
   const [back, forward] = props.navState;
-  console.log('back forward', back, forward);
   let startIndex = restrictDays && WEEK_DAYS.indexOf(restrictDays.firstday);
   let endIndex = restrictDays && WEEK_DAYS.indexOf(restrictDays.lastday);
   const WEEK_HEAD = restrictDays ? WEEK_DAYS.slice(startIndex, endIndex + 1) : WEEK_DAYS;
@@ -81,6 +114,9 @@ const Month = (props) => {
           prevDisabled={!back}
           onClickPrevious={onPrevIconClick}
           onClickNext={onNextIconClick}
+          marker={marker}
+          // monthSelClick={(event) => {setDate(setMonth(date, parseInt(event.target.value)))}}
+          monthSelClick={(data) => monthClicked ? setmonthClicked(null) : setmonthClicked(data)}
         />
 
         <Grid
@@ -90,7 +126,9 @@ const Month = (props) => {
           justify="space-between"
           className={classes.weekDaysContainer}
         >
-          {WEEK_HEAD.map((day) => (
+          { monthClicked && monthClicked === marker ?
+          null
+          : WEEK_HEAD.map((day) => (
             <Typography color="textSecondary" key={day} variant="caption">
               {day}
             </Typography>
@@ -104,7 +142,26 @@ const Month = (props) => {
           justify="space-between"
           className={classes.daysContainer}
         >
-          {chunks(getDaysInMonth(date), 7).map((week, idx) => {
+          {monthClicked && monthClicked === marker ?
+            <Grid
+              item
+              container
+              direction="row"
+              justify="space-between"
+              className={classes.weekDaysContainer}
+            >
+            {MONTHS.map((month, idx) => (
+              <Box
+                bgcolor={getMonth(date) === idx ? "info.main" : "text.disabled"}
+                color="background.paper" p={2}
+                onClick={() => onMonthClick(idx)}
+                className={classes.month_style}
+              >
+              {month}
+            </Box>
+          ))}
+            </Grid>
+          : chunks(getDaysInMonth(date), 7).map((week, idx) => {
             // eslint-disable-next-line react/no-array-index-key
             // const i1 = restrictDays && week.indexOf(restrictDays.firstday);
             // const i2 = restrictDays && week.indexOf(restrictDays.lastday);

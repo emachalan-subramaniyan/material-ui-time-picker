@@ -80,7 +80,7 @@ const Menu = (props) => {
 
   return (
     <Paper elevation={5} square>
-      <Grid container direction="row" wrap="nowrap">
+      <Grid container direction="row" wrap="wrap">
         <Grid>
           <Grid container className={classes.header} alignItems="center">
             <Grid item className={classes.headerItem}>
@@ -98,7 +98,7 @@ const Menu = (props) => {
             </Grid>
           </Grid>
           <Divider />
-          <Grid container direction="row" justify="center" wrap="nowrap">
+          <Grid container direction="row" justify="center" wrap="wrap">
             <Month
               {...commonProps}
               value={firstMonth}
