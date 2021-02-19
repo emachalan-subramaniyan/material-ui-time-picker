@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Dialog, DialogActions, Button, Input, withStyles}from '@material-ui/core';
-import DateTimePicker from './TimePicker'
+import DateTimePicker from './DateTimePicker'
 import { formatHours, twoDigits } from './util'
 
 const styles = {

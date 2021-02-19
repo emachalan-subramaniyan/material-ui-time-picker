@@ -10,7 +10,7 @@ describe('index.js', () => {
   })
 
   it('should export the TimePicker', () => {
-    expect(require('./').DateTimePicker).toBe(require('./TimePicker').default)
+    expect(require('./').DateTimePicker).toBe(require('./DateTimePicker').default)
   })
 
   it('should export the Clock', () => {

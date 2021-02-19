@@ -5,7 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import Clock from '../src/Clock'
-import DateTimePicker from '../src/TimePicker'
+import DateTimePicker from '../src/DateTimePicker'
 import TimeInput from '../src/TimeInput'
 
 storiesOf('Clock', module)
