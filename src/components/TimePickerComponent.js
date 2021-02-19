@@ -60,7 +60,7 @@ const styles = (theme) => ({
   },
 })
 
-class TimePicker extends React.Component {
+class TimePickerComponent extends React.Component {
   constructor (props) {
     super(props)
     this.wrapperRef = React.createRef();
@@ -434,4 +434,4 @@ class TimePicker extends React.Component {
   }
 }
 
-export default withStyles(styles)(TimePicker)
+export default withStyles(styles)(TimePickerComponent)

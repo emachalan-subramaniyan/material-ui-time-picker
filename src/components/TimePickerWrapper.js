@@ -2,7 +2,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core';
 
-import TimePicker from './TimePicker';
+import TimePickerComponent from './TimePickerComponentComponent';
 
 const useStyles = makeStyles(() => ({
   dateRangePickerContainer: {
@@ -61,7 +61,7 @@ const TimePickerWrapper = (
       }
 
       <div className={wrapperClasses}>
-        <TimePicker {...props} />
+        <TimePickerComponent {...props} />
       </div>
     </div>
   );
