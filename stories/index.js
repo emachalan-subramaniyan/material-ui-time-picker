@@ -34,7 +34,7 @@ storiesOf('DateTimePicker', module)
       timemode="12h"
       dateFormat={'DD/MM/YYYY'}
       onDateChange={(data) => console.log('data onchange', data)}
-      onChange={(data) => console.log('change', data)}
+      onTimeChange={(data) => console.log('change', data)}
       />
   ))
   .add('24 hours', () => (
@@ -50,7 +50,7 @@ storiesOf('DateTimePicker', module)
       restrictDays={{firstday: 'Mo', lastday: "Th"}}
       dateFormat={'YYYY/DD/MM'}
       onDateChange={(data) => console.log('data onchange', data)}
-      onChange={(data) => console.log('change', data)}
+      onTimeChange={(data) => console.log('change', data)}
       />
   ))
 

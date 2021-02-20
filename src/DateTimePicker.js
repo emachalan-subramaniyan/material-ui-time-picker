@@ -82,7 +82,7 @@ class DateTimePicker extends React.Component {
   onTimeChange = (data) => {
     const {starttime, endtime} = data;
     this.setState({starttime: starttime, endtime: endtime});
-    this.props.onChange(data)
+    this.props.onTimeChange(data)
   }
 
   render () {
