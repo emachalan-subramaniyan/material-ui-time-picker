@@ -158,17 +158,31 @@ class TimePickerComponent extends React.Component {
         }, this.propagateChange)
       }
     }else{
-      if(this.props.timemode && parseInt(this.props.timemode) === 24){
+      if( this.props.timemode && parseInt(this.props.timemode) === 12 && this.state.startdate === this.state.enddate && this.state.starthours > times.getHours() % 12 ){
         this.setState({
-          endhours: times.getHours(),
-          endminutes: times.getMinutes(),
+          endhours: this.state.starthours,
+          endminutes: this.state.startminutes,
+          endsession: this.state.startsession
+        }, this.propagateChange)
+      }else if( this.props.timemode && parseInt(this.props.timemode) === 24 && this.state.startdate === this.state.enddate && this.state.starthours > times.getHours()){
+        this.setState({
+          endhours: this.state.starthours,
+          endminutes: this.state.startminutes,
+          endsession: this.state.startsession
         }, this.propagateChange)
       }else{
-      this.setState({
-        endhours: times.getHours() % 12,
-        endminutes: times.getMinutes(),
-        endsession: times.getHours() >= 12 ? "PM" : "AM"
-      }, this.propagateChange)
+        if(this.props.timemode && parseInt(this.props.timemode) === 24){
+          this.setState({
+            endhours: times.getHours(),
+            endminutes: times.getMinutes(),
+          }, this.propagateChange)
+        }else{
+        this.setState({
+          endhours: times.getHours() % 12,
+          endminutes: times.getMinutes(),
+          endsession: times.getHours() >= 12 ? "PM" : "AM"
+        }, this.propagateChange)
+        }
       }
     }
   }
