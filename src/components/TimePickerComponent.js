@@ -79,8 +79,8 @@ class TimePickerComponent extends React.Component {
       endsession: this.getinitialState("session"),
       opendate: false,
       opentime: false,
-      startdate: null,
-      enddate: null,
+      startdate: props.selectedDate && props.selectedDate.startdate ? props.selectedDate.startdate : null,
+      enddate: props.selectedDate && props.selectedDate.enddate ? props.selectedDate.enddate : null,
       starttime: null,
       endtime: null,
     }
@@ -222,9 +222,9 @@ class TimePickerComponent extends React.Component {
         endsession: this.state.startsession
       }, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
-      // console.log('this.state.starthours', this.state.starthours, this.state.endhours);
+      console.log('this.state.starthours', this.state.startdate,this.state.enddate);
       if(this.state.startdate === this.state.enddate && this.state.startsession === this.state.endsession && this.state.starthours >= this.state.endhours){
-        // console.log('yes end happen');
+        console.log('yes end happen');
       }else{
         this.setState({
           endhours: this.state.endhours - 1,
