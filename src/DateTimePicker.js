@@ -91,7 +91,7 @@ class DateTimePicker extends React.Component {
     } = this.props
     return (
       <div className={classes.root}>
-        <Box borderRadius="2%" border={1} className={classes.box_style}>
+        {/* <Box borderRadius="2%" border={1} className={classes.box_style}> */}
           <Grid container direction="row" justify="center" wrap="wrap">
             <div className={this.state.opentime ? classes.textinput1_style : classes.textinput_style}>
               <TextField
@@ -117,7 +117,7 @@ class DateTimePicker extends React.Component {
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
             </div>
           </Grid>
-        </Box>
+        {/* </Box> */}
         <div>
           <DateRangePickerExporter
             open={this.state.opendate}

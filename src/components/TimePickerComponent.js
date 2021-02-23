@@ -123,6 +123,7 @@ class TimePickerComponent extends React.Component {
           endsession: "AM",
         }, this.propagateChange);
       }else{
+        if(this.props.timemode && parseInt(this.props.timemode) === 24){
         this.setState({
           startsession: "PM",
           starthours: this.props.restrictTime && this.props.restrictTime.endtime ? Number(this.props.restrictTime.endtime) - 1 : this.state.starthours,
@@ -131,12 +132,26 @@ class TimePickerComponent extends React.Component {
           endminutes: 59,
           endsession: "PM",
         }, this.propagateChange);
+      }else{
+        this.setState({
+          startsession: "PM",
+          starthours: this.props.restrictTime && this.props.restrictTime.endtime ? (Number(this.props.restrictTime.endtime) % 12) - 1 : this.state.starthours,
+          startminutes: 59,
+          endhours: this.props.restrictTime && this.props.restrictTime.endtime ? (Number(this.props.restrictTime.endtime) % 12) - 1 : this.state.starthours,
+          endminutes: 59,
+          endsession: "PM",
+        }, this.propagateChange);
+      }
       }
     }else{
-      if(this.props.restrictTime && this.state.endsession === 'AM' && this.state.starthours <= this.state.endhours){
+      if(this.state.startdate === this.state.enddate && this.state.startsession === "PM"){
+
+      }else if(this.props.restrictTime && this.state.endsession === 'AM' && this.props.timemode && parseInt(this.props.timemode) === 12){
+        this.setState({endhours: this.props.restrictTime.endtime % 12 - 1, endsession: "PM"})
+      }else if(this.props.restrictTime && this.state.endsession === 'AM' && this.state.starthours <= this.state.endhours){
         this.setState({endhours: this.props.restrictTime.endtime - 1, endsession: "PM"})
       }else if(this.props.restrictTime && this.state.endsession === 'PM'){
-        this.setState({endhours: this.state.starthours, endminutes: this.state.endminutes, endsession: "AM"})
+        this.setState({endhours: this.state.starthours, endminutes: this.state.startminutes, endsession: "AM"})
       }else{
         this.setState({ endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange);
       }
@@ -191,16 +206,27 @@ class TimePickerComponent extends React.Component {
 
   onHandleUpPress = (data, part) => {
     if(data === 'start' && part === 'hours'){
-      this.setState({
-        starthours: this.state.starthours + 1,
-        endhours: this.state.starthours + 1,
-        endminutes: this.state.startminutes,
-        endsession: this.state.startsession
-      }, this.propagateChange)
+      if( this.state.startsession === "PM" && this.props.timemode && parseInt(this.props.timemode) === 12 && this.props.restrictTime &&
+      (this.props.restrictTime.endtime % 12 - 1) <= this.state.starthours ){
+        // console.log('greater than pm')
+      }else if(this.state.startdate === this.state.enddate && this.props.timemode && parseInt(this.props.timemode) === 24 &&
+      this.props.restrictTime && this.props.restrictTime.endtime -1 <= this.state.starthours){
+
+      }else{
+        this.setState({
+          starthours: this.state.starthours + 1,
+          endhours: this.state.starthours + 1,
+          endminutes: this.state.startminutes,
+          endsession: this.state.startsession
+        }, this.propagateChange)
+      }
     }else if(data === 'start' && part === 'minutes'){
       this.setState({startminutes: this.state.startminutes + 1, endminutes: this.state.startminutes + 1}, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
-      if(this.props.timemode && parseInt(this.props.timemode) === 24 && this.props.restrictTime && this.props.restrictTime.endtime <= this.state.endhours +1 ){
+      if( this.state.endsession === "PM" && this.props.timemode && parseInt(this.props.timemode) === 12 && this.props.restrictTime &&
+      (this.props.restrictTime.endtime % 12 - 1) <= this.state.endhours ){
+        // console.log('greater than pm')
+      }else if(this.props.timemode && parseInt(this.props.timemode) === 24 && this.props.restrictTime && this.props.restrictTime.endtime <= this.state.endhours +1 ){
         // console.log('blocked for above timemode 24 hr restriction');
       }else if(this.state.endsession === 'PM' &&
         this.props.restrictToDayTime && this.props.restrictTime &&
@@ -219,7 +245,7 @@ class TimePickerComponent extends React.Component {
       if(this.props.restrictToDayTime && this.state.startdate === this.state.enddate && this.state.startsession === "AM" &&
       this.props.restrictTime && this.state.starthours - 1 < this.props.restrictTime.starttime ){
         // console.log('yes happen');
-      }else if(this.props.restrictToDayTime && this.props.restrictTime && this.props.restrictTime.starttime >= this.state.starthours){
+      }else if(this.props.restrictToDayTime && this.props.restrictTime && this.props.restrictTime.starttime >= this.state.starthours && this.state.startsession === "AM"){
         // console.log('yes u got it');
       }else{
         // console.log('start hour', this.state.starthours -1 );
@@ -238,12 +264,12 @@ class TimePickerComponent extends React.Component {
         endsession: this.state.startsession
       }, this.propagateChange)
     }else if(data === "end" && part === 'hours'){
-      if(this.state.startdate === this.state.enddate && this.state.startsession === this.state.endsession && this.state.starthours >= this.state.endhours){
-        // console.log('yes end happen');
-      }else if(this.state.endsession === 'AM' && this.props.restrictToDayTime && this.props.restrictTime && this.props.restrictTime.starttime >= this.state.endhours){
+      if(this.state.endsession === 'AM' && this.props.restrictToDayTime && this.props.restrictTime && this.props.restrictTime.starttime >= this.state.endhours){
         // console.log('yes u got it');
       }else if(this.state.endsession === 'PM' && this.props.restrictToDayTime && this.props.restrictTime && this.props.restrictTime.endtime <= this.state.endhours){
         // console.log('yes u got it');
+      }else if(this.state.startsession === this.state.endsession && this.state.starthours >= this.state.endhours){
+
       }else{
         this.setState({
           endhours: this.state.endhours - 1,
