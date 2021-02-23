@@ -93,7 +93,7 @@ class TimePickerComponent extends React.Component {
     const time = this.props.value || this.props.defaultValue || defaultValue
     if(data === "time"){
       if(this.props.timemode && parseInt(this.props.timemode) === 24){
-        if(this.props.restrictTime && this.props.restrictTime.starttime > time.getHours()){
+        if(this.props.restrictTime && this.props.restrictTime.starttime < time.getHours()){
           return this.props.restrictTime.starttime
         }else{
           return time.getHours();
@@ -161,6 +161,9 @@ class TimePickerComponent extends React.Component {
 
   onNowPress = (data) => {
     const times = new Date();
+    if(this.props.restrictTime && this.props.restrictTime.endtime < times.getHours()){
+      alert("Selected time is not within the range")
+    }else{
     if(data === 'start'){
       if(this.props.timemode && parseInt(this.props.timemode) === 24){
         this.setState({
@@ -202,6 +205,7 @@ class TimePickerComponent extends React.Component {
         }
       }
     }
+  }
   }
 
   onHandleUpPress = (data, part) => {
@@ -288,20 +292,25 @@ class TimePickerComponent extends React.Component {
   }
 
   onTimePress = (data) => {
-    if(data === 'start'){
-      this.setState({
-        starthours: 12,
-        startminutes: 0,
-        startsession: "AM",
-      }, this.propagateChange)
+    const times = new Date();
+    if(this.props.restrictTime && this.props.restrictTime.endtime < times.getHours()){
+      alert("Selected time is not within the range")
     }else{
-      this.setState({
-        endhours: 12,
-        endminutes: 0,
-        endsession: "AM"
-      }, this.propagateChange)
-    }
+      if(data === 'start'){
+        this.setState({
+          starthours: 12,
+          startminutes: 0,
+          startsession: "AM",
+        }, this.propagateChange)
+      }else{
+        this.setState({
+          endhours: 12,
+          endminutes: 0,
+          endsession: "AM"
+        }, this.propagateChange)
+      }
   }
+}
 
   propagateChange = () => {
     const {starthours, startminutes, startsession, endhours, endminutes, endsession} = this.state;
