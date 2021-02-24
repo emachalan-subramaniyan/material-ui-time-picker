@@ -6,10 +6,11 @@ import TimePickerComponent from './TimePickerComponent';
 
 const useStyles = makeStyles(() => ({
   dateRangePickerContainer: {
-    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center'
   },
   dateRangePicker: {
-    position: 'relative',
+    position: 'fixed',
     zIndex: 1,
   },
   dateRangeBackdrop: {

@@ -10,7 +10,7 @@ const useStyles = makeStyles(() => ({
     justifyContent: 'center'
   },
   dateRangePicker: {
-    position: 'relative',
+    position: 'fixed',
     zIndex: 1,
   },
   dateRangeBackdrop: {

@@ -64,25 +64,42 @@ class TimePickerComponent extends React.Component {
   constructor (props) {
     super(props)
     this.wrapperRef = React.createRef();
-
+    
     const defaultValue = new Date()
     defaultValue.setSeconds(0)
     defaultValue.setMilliseconds(0)
     const time = props.value || props.defaultValue || defaultValue
     this.state = {
       select: 'h',
-      starthours: this.getinitialState("time"),
-      endhours: this.getinitialState("time"),
-      startminutes: time.getMinutes(),
-      endminutes: time.getMinutes(),
-      startsession: this.getinitialState("session"),
-      endsession: this.getinitialState("session"),
+      starthours: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('starthour') : this.getinitialState("time"),
+      endhours: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('endhour') : this.getinitialState("time"),
+      startminutes: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('startminute') : time.getMinutes(),
+      endminutes: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('endminute') : time.getMinutes(),
+      startsession: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('startsession') : this.getinitialState("session"),
+      endsession: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('endsession') : this.getinitialState("session"),
       opendate: false,
       opentime: false,
       startdate: props.selectedDate && props.selectedDate.startdate ? props.selectedDate.startdate : null,
       enddate: props.selectedDate && props.selectedDate.enddate ? props.selectedDate.enddate : null,
       starttime: null,
       endtime: null,
+    }
+  }
+
+  getSelectedValue = (data) => {
+    const {selectedTime} = this.props;
+    if(data === "starthour"){
+      return Number(selectedTime.starttime.substr(0, selectedTime.starttime.indexOf(":")))
+    }else if(data === "endhour"){
+      return Number(selectedTime.endtime.substr(0, selectedTime.endtime.indexOf(":")))
+    }else if(data === "startminute"){
+      return parseInt(selectedTime.starttime.substr(selectedTime.starttime.indexOf(":") + 1))
+    }else if(data === "endminute"){
+      return parseInt(selectedTime.endtime.substr(selectedTime.endtime.indexOf(":") + 1))
+    }else if(data === "startsession"){
+      return selectedTime.starttime.substr(selectedTime.starttime.length - 2)
+    }else{
+      return selectedTime.endtime.substr(selectedTime.endtime.length - 2)
     }
   }
 

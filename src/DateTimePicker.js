@@ -132,6 +132,7 @@ class DateTimePicker extends React.Component {
         {this.props.includeTime && this.state.opentime && <div className={classes.timecon_style}>
           <TimePickerExporter
             selectedDate={{startdate: this.state.startdate, enddate: this.state.enddate}}
+            selectedTime={{starttime: this.state.starttime, endtime: this.state.endtime}}
             opentime={this.state.opentime}
             closeOnClickTimeOutside
             timetoggle={this.timetoggle}
