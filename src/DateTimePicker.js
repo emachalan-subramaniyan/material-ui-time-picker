@@ -4,7 +4,8 @@ import {Box, Grid, TextField} from "@material-ui/core";
 import {Event, AccessAlarm } from '@material-ui/icons';
 import moment from 'moment';
 import DateRangePickerExporter from './components/DateRangePickerExporter';
-import TimePickerExporter from './components/TimePickerExporter'
+import TimePickerExporter from './components/TimePickerExporter';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = (theme) => ({
   root: {
@@ -23,7 +24,7 @@ const styles = (theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     display: 'flex',
-    marginRight: '70px',
+    marginRight: '10px',
     marginLeft: '30px',
     marginBottom: '5px',
     height: '40px'
@@ -32,7 +33,7 @@ const styles = (theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     display: 'flex',
-    marginRight: '30px',
+    // marginRight: '30px',
     marginLeft: '30px',
     marginBottom: '5px'
   },
@@ -41,6 +42,10 @@ const styles = (theme) => ({
     justifyContent: 'center'
   },
   text_con: {
+    "& input::-webkit-calendar-picker-indicator, & input::-webkit-calendar-picker-indicator, & input::-webkit-calendar-picker-indicator": {
+      display: "none",
+      background: "none",
+  },
     // height: 40
   }
 })
@@ -56,6 +61,8 @@ class DateTimePicker extends React.Component {
       starttime: null,
       endtime: null,
     }
+    this.startInput = React.createRef();
+    this.endInput = React.createRef();
   }
 
   onDateIconClick = () => {
@@ -71,20 +78,125 @@ class DateTimePicker extends React.Component {
 
 
   onDateChange = (data) => {
+    const {startDate, endDate} = data;
+    const value = {
+      startDate: startDate,
+      endDate: endDate,
+      startTime: this.state.starttime,
+      endTime: this.state.endtime,
+    }
     this.setState({
       startdate: moment(data.startDate).format(this.props.dateFormat),
       enddate: moment(data.endDate).format(this.props.dateFormat),
     });
-    this.props.onDateChange(data);
+    this.props.onDateChange(value);
     this.setState({ opendate: !this.state.opendate, opentime: false, starttime: null, endtime: null});
   }
 
   onTimeChange = (data) => {
     const {starttime, endtime} = data;
+    const value = {
+      startDate: this.state.startdate,
+      endDate: this.state.enddate,
+      startTime: starttime,
+      endTime: endtime,
+    }
+    this.props.onDateChange(value);
     this.setState({starttime: starttime, endtime: endtime});
-    this.props.onTimeChange(data)
+  }
+  
+  onStartDateType = (data) => {
+    if(data.length <= 10){
+      this.setState({startdate: data})
+      const value = {
+        startDate: data,
+        endDate: this.state.enddate,
+        startTime: this.state.starttime,
+        endTime: this.state.endtime,
+      }
+      this.props.onDateChange(value)
+    }else{
+      this.setState({startdate: data})
+      const value = {
+        startDate: this.state.startdate,
+        endDate: this.state.enddate,
+        startTime: data.substr(11, 10),
+        endTime: this.state.endtime,
+      }
+      this.props.onDateChange(value)
+    }
   }
 
+  onEndDateType = (data) => {
+    if(data.length <= 10){
+    this.setState({enddate: data})
+    const value = {
+      startDate: this.state.startdate,
+      endDate: data,
+      startTime: this.state.starttime,
+      endTime: this.state.endtime,
+    }
+    this.props.onDateChange(value)
+  }else {
+    this.setState({enddate: data})
+    const value = {
+      startDate: this.state.startdate,
+      endDate: this.state.enddate,
+      startTime: this.state.starttime,
+      endTime: data.substr(11, 10),
+    }
+    this.props.onDateChange(value)
+    }
+  }
+
+  starttextboxValue = () => {
+    if(this.props.includeDate){
+      if(this.state.startdate && this.state.starttime){
+        return this.state.startdate + ' ' + this.state.starttime;
+      }else if(this.state.startdate && this.state.starttime === null){
+        return this.state.startdate;
+      }else{
+        return undefined;
+      }
+    }else{
+      if(this.state.starttime){
+        return this.state.starttime;
+      }else{
+        return undefined;
+      }
+    }
+  }
+
+  endtextboxValue = () => {
+    if(this.props.includeDate){
+      if(this.state.enddate && this.state.endtime){
+        return this.state.enddate + ' ' + this.state.endtime;
+      }else if(this.state.enddate && this.state.endtime === null){
+        return this.state.enddate;
+      }else{
+        return undefined;
+      }
+    }else{
+      if(this.state.endtime){
+        return this.state.endtime;
+      }else{
+        return undefined;
+      }
+    }
+  }
+
+  onClearClick = () => {
+    this.startInput.value = null;
+    this.endInput.value = null;
+    this.setState({
+      startdate: null,
+      starttime: null,
+      enddate: null,
+      endtime: null
+    })
+  }
+
+  
   render () {
     const {
       classes,
@@ -96,29 +208,35 @@ class DateTimePicker extends React.Component {
             <div className={this.state.opentime ? classes.textinput1_style : classes.textinput_style}>
               <TextField
                 id="startdatetime"
+                inputRef={d => this.startInput = d}
                 className={classes.text_con}
-                label={ this.state.startdate === null && this.props.startPlaceholder && this.props.startPlaceholder}
-                value={this.state.startdate && this.state.starttime ?
-                  this.state.startdate + ' ' + this.state.starttime :
-                  this.state.startdate && this.state.starttime === null ? this.state.startdate : undefined}
+                placeholder={ this.props.startPlaceholder && this.props.startPlaceholder}
+                value={this.starttextboxValue()}
+                // type={this.state.startdate ? null : "datetime-local"}
+                name="startdate"
+                onChange={(event) => this.onStartDateType(event.target.value)}
               />
-              <Event onClick={() => this.onDateIconClick()} />
+              {this.props.includeDate &&<Event onClick={() => this.onDateIconClick()} />}
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
             </div>
-            <div className={classes.textinput_style}>
+            <div className={classes.textinput_style}> 
               <TextField
                 id="enddatetime"
-                label={this.state.enddate === null && this.props.endPlaceholder && this.props.endPlaceholder}
-                value={this.state.enddate && this.state.endtime ?
-                  this.state.enddate + ' ' + this.state.endtime :
-                  this.state.enddate && this.state.endtime === null ? this.state.enddate : undefined}
+                className={classes.text_con}
+                inputRef={d => this.endInput = d}
+                placeholder={ this.props.endPlaceholder && this.props.endPlaceholder}
+                // type={this.state.enddate ? null : "datetime-local"}
+                value={this.endtextboxValue()}
+                name="enddate"
+                onChange={(event) => this.onEndDateType(event.target.value)}
               />
-              <Event onClick={() => this.onDateIconClick()} />
+              {this.props.includeDate && <Event onClick={() => this.onDateIconClick()} />}
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
             </div>
+            <CloseIcon  onClick={() => this.onClearClick()}/>
           </Grid>
         {/* </Box> */}
-        <div>
+        {this.props.includeDate && <div>
           <DateRangePickerExporter
             open={this.state.opendate}
             closeOnClickOutside
@@ -127,8 +245,9 @@ class DateTimePicker extends React.Component {
             maxPrev={this.props.maxPrev}
             restrictDays={this.props.restrictDays}
             onChange={(range) => this.onDateChange(range)}
+            includeRelativeDate={this.props.includeRelativeDate}
           />
-        </div>
+        </div>}
         {this.props.includeTime && this.state.opentime && <div className={classes.timecon_style}>
           <TimePickerExporter
             selectedDate={{startdate: this.state.startdate, enddate: this.state.enddate}}

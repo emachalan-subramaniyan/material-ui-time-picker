@@ -154,6 +154,7 @@ const DateRangePicker = (
       maxNextProps={maxNext}
       maxPrevProps={maxPrev}
       restrictDaysProps={restrictDays}
+      includeRelativeDate={props.includeRelativeDate}
     />
   ) : null;
 };

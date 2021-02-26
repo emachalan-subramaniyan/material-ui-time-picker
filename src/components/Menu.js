@@ -123,13 +123,13 @@ const Menu = (props) => {
           </Grid>
         </Grid>
         <div className={classes.divider} />
-        <Grid>
+       {props.includeRelativeDate && <Grid>
           <DefinedRanges
             selectedRange={dateRange}
             ranges={ranges}
             setRange={setDateRange}
           />
-        </Grid>
+        </Grid>}
       </Grid>
     </Paper>
   );

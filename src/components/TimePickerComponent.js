@@ -308,6 +308,26 @@ class TimePickerComponent extends React.Component {
     }
   }
 
+  WheelFunction = (item, events) => {
+    if(item === "starthours" && events.nativeEvent.wheelDelta < 0){
+      this.state.starthours < parseInt(this.props.timemode) - 1 && this.onHandleUpPress("start", "hours")
+    }else if(item === "startminutes" && events.nativeEvent.wheelDelta < 0){
+      this.state.startminutes <= 58 && this.onHandleUpPress("start", "minutes")
+    }else if(item === "endhours" && events.nativeEvent.wheelDelta < 0){
+      this.state.endhours < parseInt(this.props.timemode) - 1 && this.onHandleUpPress("end", "hours")
+    }else if(item === "endminutes" && events.nativeEvent.wheelDelta < 0){
+      this.state.endminutes <= 58 && this.onHandleUpPress("end", "minutes")
+    }else if(item === "starthours" && events.nativeEvent.wheelDelta > 0){
+      this.state.starthours >= 1 && this.onHandleDownPress("start", "hours")
+    }else if(item === "startminutes" && events.nativeEvent.wheelDelta > 0){
+      this.state.startminutes >= 1 && this.onHandleDownPress("start", "minutes")
+    }else if(item === "endhours" && events.nativeEvent.wheelDelta > 0){
+      this.state.endhours >= 1 && this.onHandleDownPress("end", "hours")
+    }else if(item === "endminutes" && events.nativeEvent.wheelDelta > 0){
+      this.state.endminutes >= 1 && this.onHandleDownPress("end", "minutes")
+    }
+  }
+
   onTimePress = (data) => {
     const times = new Date();
     if(this.props.restrictTime && this.props.restrictTime.endtime < times.getHours()){
@@ -380,7 +400,7 @@ class TimePickerComponent extends React.Component {
           </div>
           <Divider orientation="horizontal" variant="fullWidth" light={true} className={classes.divider_style} />
           <div className={classes.paper_con1}>
-          <div className={classes.time_con}>
+          <div className={classes.time_con} onWheel={(event) => this.WheelFunction('starthours', event)}>
             <Typography align="center">
               Hours
             </Typography>
@@ -398,7 +418,7 @@ class TimePickerComponent extends React.Component {
                 className={classes.icon_style}  
             />
           </div> :
-          <div className={classes.time_con}>
+          <div className={classes.time_con} onWheel={(event) => this.WheelFunction('startminutes', event)}>
             <Typography align="center">
                 Minutes
               </Typography>
@@ -415,7 +435,7 @@ class TimePickerComponent extends React.Component {
                 />
             </div>
             {parseInt(this.props.timemode) === 12 && ":" }
-            {parseInt(this.props.timemode) === 12 && <div className={classes.time_con}>
+            {parseInt(this.props.timemode) === 12 && <div className={classes.time_con} onWheel={(event) => this.WheelFunction('startsession', event)}>
                 <Typography align="center">
                 AM/PM
               </Typography>
@@ -448,7 +468,7 @@ class TimePickerComponent extends React.Component {
           </div>
           <Divider orientation="horizontal" variant="fullWidth" light={true} className={classes.divider_style} />
           <div className={classes.paper_con1}>
-          <div className={classes.time_con}>
+          <div className={classes.time_con} onWheel={(event) => this.WheelFunction('endhours', event)}>
             <Typography align="center">
               Hours
             </Typography>
@@ -464,7 +484,7 @@ class TimePickerComponent extends React.Component {
                 className={classes.icon_style}  
             />
           </div> :
-          <div className={classes.time_con}>
+          <div className={classes.time_con} onWheel={(event) => this.WheelFunction('endminutes', event)}>
             <Typography align="center">
                 Minutes
             </Typography>
