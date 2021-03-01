@@ -41,11 +41,11 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center'
   },
-  text_con: {
+  starttext_con: {
     "& input::-webkit-calendar-picker-indicator, & input::-webkit-calendar-picker-indicator, & input::-webkit-calendar-picker-indicator": {
       display: "none",
       background: "none",
-  },
+    },
     // height: 40
   }
 })
@@ -60,6 +60,10 @@ class DateTimePicker extends React.Component {
       enddate: null,
       starttime: null,
       endtime: null,
+      defaultStartVale: null,
+      defaultEndVale: null,
+      startTextFocused: false,
+      endTextFocused: false,
     }
     this.startInput = React.createRef();
     this.endInput = React.createRef();
@@ -106,47 +110,74 @@ class DateTimePicker extends React.Component {
   }
   
   onStartDateType = (data) => {
-    if(data.length <= 10){
-      this.setState({startdate: data})
-      const value = {
-        startDate: data,
-        endDate: this.state.enddate,
-        startTime: this.state.starttime,
-        endTime: this.state.endtime,
-      }
-      this.props.onDateChange(value)
-    }else{
-      this.setState({startdate: data})
-      const value = {
-        startDate: this.state.startdate,
-        endDate: this.state.enddate,
-        startTime: data.substr(11, 10),
-        endTime: this.state.endtime,
-      }
-      this.props.onDateChange(value)
-    }
+    this.setState({defaultStartVale: data})
+    this.startInput.type = "text";
+    if(this.props.includeDate){
+    let date = moment(data).format(this.props.dateFormat ? this.props.dateFormat : 'DD/MM/YYYY')
+    let time = moment(data).format(this.props.timemode &&
+    parseInt(this.props.timemode) == 12 ? "hh:mm a" : 'HH:mm')
+    const value = {
+      startdate: date,
+      starttime: time,
+      enddate: this.state.enddate,
+      endtime: this.state.endtime
+    };
+    this.setState({
+      startdate: date,
+      starttime: time,
+      enddate: this.state.enddate,
+      endtime: this.state.endtime
+    }, this.props.onDateChange(value));
+  }else{
+    const value = {
+      startdate: this.state.startdate,
+      starttime: data,
+      enddate: this.state.enddate,
+      endtime: this.state.endtime
+    };
+    this.setState({
+      startdate: this.state.startdate,
+      starttime: data,
+      enddate: this.state.enddate,
+      endtime: this.state.endtime
+    }, this.props.onDateChange(value));
+  }
   }
 
   onEndDateType = (data) => {
-    if(data.length <= 10){
-    this.setState({enddate: data})
-    const value = {
-      startDate: this.state.startdate,
-      endDate: data,
-      startTime: this.state.starttime,
-      endTime: this.state.endtime,
-    }
-    this.props.onDateChange(value)
-  }else {
-    this.setState({enddate: data})
-    const value = {
-      startDate: this.state.startdate,
-      endDate: this.state.enddate,
-      startTime: this.state.starttime,
-      endTime: data.substr(11, 10),
-    }
-    this.props.onDateChange(value)
-    }
+    this.setState({defaultEndVale: data})
+    if(this.props.includeDate){
+      let date = moment(data).format(this.props.dateFormat ? this.props.dateFormat : 'DD/MM/YYYY')
+      let time = moment(data).format(this.props.timemode &&
+        parseInt(this.props.timemode) === 12 ? "hh:mm a" : 'HH:mm')
+        const value = {
+          startdate: this.state.startdate,
+          starttime: this.state.starttime,
+          enddate: date,
+          endtime: time
+        };
+        this.endInput.type = "text";
+        this.setState({
+          startdate: this.state.startdate,
+          starttime: this.state.starttime,
+          enddate: date,
+          endtime: time
+        }, this.props.onDateChange(value));
+      }else{
+        const value = {
+          startdate: this.state.startdate,
+          starttime: this.state.starttime,
+          enddate: this.state.enddate,
+          endtime: data
+        };
+        this.endInput.type = "text";
+    this.setState({
+      startdate: this.state.startdate,
+      starttime: this.state.starttime,
+      enddate: this.state.enddate,
+      endtime: data
+    }, this.props.onDateChange(value));
+  }    
   }
 
   starttextboxValue = () => {
@@ -207,13 +238,17 @@ class DateTimePicker extends React.Component {
           <Grid container direction="row" justify="center" wrap="wrap">
             <div className={this.state.opentime ? classes.textinput1_style : classes.textinput_style}>
               <TextField
-                id="startdatetime"
+                id="datetime-local"
                 inputRef={d => this.startInput = d}
-                className={classes.text_con}
+                className={classes.starttext_con}
                 placeholder={ this.props.startPlaceholder && this.props.startPlaceholder}
                 value={this.starttextboxValue()}
-                // type={this.state.startdate ? null : "datetime-local"}
+                type="text"
+                onFocus={() => {this.startInput.type = this.props.includeDate ?  "datetime-local" : "time"}}
+                onBlur={() => this.startInput.type="text"}
                 name="startdate"
+                max={this.props.timemode &&
+                  parseInt(this.props.timemode) === 12 ? "2051-01-01T12:00" : '"2051-01-01T23:59"'}
                 onChange={(event) => this.onStartDateType(event.target.value)}
               />
               {this.props.includeDate &&<Event onClick={() => this.onDateIconClick()} />}
@@ -222,12 +257,15 @@ class DateTimePicker extends React.Component {
             <div className={classes.textinput_style}> 
               <TextField
                 id="enddatetime"
-                className={classes.text_con}
+                className={classes.starttext_con}
                 inputRef={d => this.endInput = d}
                 placeholder={ this.props.endPlaceholder && this.props.endPlaceholder}
-                // type={this.state.enddate ? null : "datetime-local"}
+                type="text"
+                onFocus={() => {this.endInput.type = this.props.includeDate ?  "datetime-local" : "time"}}
+                onBlur={() => this.endInput.type="text" }
                 value={this.endtextboxValue()}
                 name="enddate"
+                max="2051-01-01T23:59"
                 onChange={(event) => this.onEndDateType(event.target.value)}
               />
               {this.props.includeDate && <Event onClick={() => this.onDateIconClick()} />}
