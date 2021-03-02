@@ -247,8 +247,6 @@ class DateTimePicker extends React.Component {
                 onFocus={() => {this.startInput.type = this.props.includeDate ?  "datetime-local" : "time"}}
                 onBlur={() => this.startInput.type="text"}
                 name="startdate"
-                max={this.props.timemode &&
-                  parseInt(this.props.timemode) === 12 ? "2051-01-01T12:00" : '"2051-01-01T23:59"'}
                 onChange={(event) => this.onStartDateType(event.target.value)}
               />
               {this.props.includeDate &&<Event onClick={() => this.onDateIconClick()} />}
@@ -265,7 +263,6 @@ class DateTimePicker extends React.Component {
                 onBlur={() => this.endInput.type="text" }
                 value={this.endtextboxValue()}
                 name="enddate"
-                max="2051-01-01T23:59"
                 onChange={(event) => this.onEndDateType(event.target.value)}
               />
               {this.props.includeDate && <Event onClick={() => this.onDateIconClick()} />}
