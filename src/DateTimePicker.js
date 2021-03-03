@@ -47,6 +47,10 @@ const styles = (theme) => ({
       background: "none",
     },
     // height: 40
+  },
+  close_style: {
+    display: 'flex',
+    alignItems: 'center'
   }
 })
 
@@ -291,7 +295,9 @@ class DateTimePicker extends React.Component {
               {this.props.includeDate && <Event onClick={() => this.onDateIconClick()} />}
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
             </div>
-            <CloseIcon  onClick={() => this.onClearClick()}/>
+            <div className={classes.close_style}>
+              <CloseIcon  onClick={() => this.onClearClick()}/>
+            </div>
           </Grid>
         {/* </Box> */}
         {this.props.includeDate && <div>
