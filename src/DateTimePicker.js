@@ -60,7 +60,7 @@ class DateTimePicker extends React.Component {
       enddate: null,
       starttime: null,
       endtime: null,
-      defaultStartVale: null,
+      defaultStartValue: null,
       defaultEndVale: null,
       startTextFocused: false,
       endTextFocused: false,
@@ -110,8 +110,7 @@ class DateTimePicker extends React.Component {
   }
   
   onStartDateType = (data) => {
-    this.setState({defaultStartVale: data})
-    this.startInput.type = "text";
+    this.setState({defaultStartValue: data})
     if(this.props.includeDate){
     let date = moment(data).format(this.props.dateFormat ? this.props.dateFormat : 'DD/MM/YYYY')
     let time = moment(data).format(this.props.timemode &&
@@ -129,19 +128,31 @@ class DateTimePicker extends React.Component {
       endtime: this.state.endtime
     }, this.props.onDateChange(value));
   }else{
-    const value = {
-      startdate: this.state.startdate,
-      starttime: data,
-      enddate: this.state.enddate,
-      endtime: this.state.endtime
-    };
-    this.setState({
-      startdate: this.state.startdate,
-      starttime: data,
-      enddate: this.state.enddate,
-      endtime: this.state.endtime
-    }, this.props.onDateChange(value));
-  }
+      let starthour = null;
+      if(this.props.timemode && parseInt(this.props.timemode) === 12){
+        let hour = Number(data.split(":")[0]) > 12 ? Number(data.split(":")[0]) % 12 : Number(data.split(":")[0]);
+        let minute = data.split(":")[1];
+        let session = Number(data.split(":")[0]) > 12 ? "  PM" : "  AM";
+        starthour = hour <= 9 ? '0'+hour+":"+minute+session : hour+":"+minute+session;
+      }else{
+        let hour = Number(data.split(":")[0]);
+        let minute = data.split(":")[1];
+        starthour = hour <= 9 ? '0'+hour+":"+minute : hour+":"+minute;
+      }
+        const value = {
+          startdate: null,
+          starttime: starthour,
+          enddate: this.state.enddate,
+          endtime: this.state.endtime
+        };
+        this.setState({
+          startdate: null,
+          starttime: starthour,
+          enddate: this.state.enddate,
+          endtime: this.state.endtime
+        }, this.props.onDateChange(value));
+      }
+      this.endInput.focus();
   }
 
   onEndDateType = (data) => {
@@ -164,20 +175,31 @@ class DateTimePicker extends React.Component {
           endtime: time
         }, this.props.onDateChange(value));
       }else{
+        let endhour = null;
+        if(this.props.timemode && parseInt(this.props.timemode) === 12){
+          let hour = Number(data.split(":")[0]) > 12 ? Number(data.split(":")[0]) % 12 : Number(data.split(":")[0]);
+          let minute = data.split(":")[1];
+          let session = Number(data.split(":")[0]) > 12 ? "  PM" : "  AM";
+          endhour = hour <= 9 ? '0'+hour+":"+minute+session : hour+":"+minute+session;
+        }else{
+          let hour = Number(data.split(":")[0]);
+          let minute = data.split(":")[1];
+          endhour = hour <= 9 ? '0'+hour+":"+minute : hour+":"+minute;
+        }
         const value = {
           startdate: this.state.startdate,
           starttime: this.state.starttime,
-          enddate: this.state.enddate,
-          endtime: data
+          enddate: null,
+          endtime: endhour
         };
-        this.endInput.type = "text";
-    this.setState({
-      startdate: this.state.startdate,
-      starttime: this.state.starttime,
-      enddate: this.state.enddate,
-      endtime: data
-    }, this.props.onDateChange(value));
-  }    
+        this.setState({
+          startdate: this.state.startdate,
+          starttime: this.state.starttime,
+          enddate: null,
+          endtime: endhour
+        }, this.props.onDateChange(value));
+      }
+      this.endInput.disabled=true
   }
 
   starttextboxValue = () => {
@@ -253,16 +275,17 @@ class DateTimePicker extends React.Component {
               {this.props.includeTime && <AccessAlarm onClick={() => this.onTimeIconClick()} />}
             </div>
             <div className={classes.textinput_style}> 
-              <TextField
+            <TextField
                 id="enddatetime"
                 className={classes.starttext_con}
                 inputRef={d => this.endInput = d}
                 placeholder={ this.props.endPlaceholder && this.props.endPlaceholder}
                 type="text"
-                onFocus={() => {this.endInput.type = this.props.includeDate ?  "datetime-local" : "time"}}
-                onBlur={() => this.endInput.type="text" }
+                onFocus={() => {this.endInput.disabled = false, this.endInput.type = this.props.includeDate ?  "datetime-local" : "time"}}
+                onBlur={() => {this.endInput.type="text", this.endInput.disabled = false} }
                 value={this.endtextboxValue()}
                 name="enddate"
+                disabled={false}
                 onChange={(event) => this.onEndDateType(event.target.value)}
               />
               {this.props.includeDate && <Event onClick={() => this.onDateIconClick()} />}
@@ -273,6 +296,8 @@ class DateTimePicker extends React.Component {
         {/* </Box> */}
         {this.props.includeDate && <div>
           <DateRangePickerExporter
+            insertedStartDate={this.state.startdate}
+            insertedEndDate={this.state.enddate}
             open={this.state.opendate}
             closeOnClickOutside
             toggle={this.toggle}

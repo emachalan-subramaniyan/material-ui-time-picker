@@ -37,6 +37,8 @@ const DateRangePicker = (
     maxNext,
     maxPrev,
     restrictDays,
+    insertedStartDate,
+    insertedEndDate
   } = props;
 
   const minDateValid = parseOptionalDate(minDate, addYears(today, -10));
@@ -46,16 +48,55 @@ const DateRangePicker = (
     minDateValid,
     maxDateValid,
   );
-
+  
   const [dateRange, setDateRange] = React.useState({ ...initialDateRange });
   const [hoverDay, setHoverDay] = React.useState();
   const [firstMonth, setFirstMonth] = React.useState(intialFirstMonth || today);
   const [secondMonth, setSecondMonth] = React.useState(
     initialSecondMonth || addMonths(firstMonth, 1),
-  );
+    );
 
-  const { startDate, endDate } = dateRange;
+  React.useEffect(() => {
+    if(insertedStartDate){
+      let date = insertedStartDate.split("/")[0]
+      let month = insertedStartDate.split("/")[1]
+      let year = insertedStartDate.split("/")[2]
+      let newDate = month+'/'+date+'/'+year
+      setFirstMonth(new Date(newDate))
+    }
+  },[insertedStartDate]);
+  
+  React.useEffect(() => {
+    if(insertedEndDate){
+      let date = insertedEndDate.split("/")[0]
+      let month = insertedEndDate.split("/")[1]
+      let year = insertedEndDate.split("/")[2]
+      let newDate = month+'/'+date+'/'+year
+      setSecondMonth(new Date(newDate))
+    }
+  },[insertedEndDate]);
 
+  React.useEffect(() => {
+    if(insertedStartDate && insertedEndDate){
+      let startdate = insertedStartDate.split("/")[0]
+      let startmonth = insertedStartDate.split("/")[1]
+      let startyear = insertedStartDate.split("/")[2]
+      let enddate = insertedEndDate.split("/")[0]
+      let endmonth = insertedEndDate.split("/")[1]
+      let endyear = insertedEndDate.split("/")[2]
+      let startnewDate = startmonth+'/'+startdate+'/'+startyear  
+      let endnewDate = endmonth+'/'+enddate+'/'+endyear
+      let data = {
+        startDate: new Date(startnewDate),
+        label: null,
+        endDate: new Date(endnewDate)
+      }
+      setDateRange(data)
+    }
+  },[insertedStartDate && insertedEndDate]);
+  
+    const { startDate, endDate } = dateRange;
+    
   // handlers
   const setFirstMonthValidated = (date) => {
     if (isBefore(date, secondMonth)) {
