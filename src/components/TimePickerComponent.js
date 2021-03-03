@@ -83,6 +83,8 @@ class TimePickerComponent extends React.Component {
       enddate: props.selectedDate && props.selectedDate.enddate ? props.selectedDate.enddate : null,
       starttime: null,
       endtime: null,
+      returnedStartValue: false,
+      returnedEndValue: false,
     }
   }
 
@@ -164,13 +166,13 @@ class TimePickerComponent extends React.Component {
       if(this.state.startdate === this.state.enddate && this.state.startsession === "PM"){
 
       }else if(this.props.restrictTime && this.state.endsession === 'AM' && this.props.timemode && parseInt(this.props.timemode) === 12){
-        this.setState({endhours: this.props.restrictTime.endtime % 12 - 1, endsession: "PM"})
+        this.setState({returnedEndValue: true, endhours: this.props.restrictTime.endtime % 12 - 1, endsession: "PM"})
       }else if(this.props.restrictTime && this.state.endsession === 'AM' && this.state.starthours <= this.state.endhours){
-        this.setState({endhours: this.props.restrictTime.endtime - 1, endsession: "PM"})
+        this.setState({returnedEndValue: true, endhours: this.props.restrictTime.endtime - 1, endsession: "PM"})
       }else if(this.props.restrictTime && this.state.endsession === 'PM'){
-        this.setState({endhours: this.state.starthours, endminutes: this.state.startminutes, endsession: "AM"})
+        this.setState({returnedEndValue: true, endhours: this.state.starthours, endminutes: this.state.startminutes, endsession: "AM"})
       }else{
-        this.setState({ endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange);
+        this.setState({returnedEndValue: true,endsession: this.state.endsession === "PM" ? "AM" : "PM" }, this.propagateChange);
       }
 
     }
@@ -178,50 +180,57 @@ class TimePickerComponent extends React.Component {
 
   onNowPress = (data) => {
     const times = new Date();
-    if(this.props.restrictTime && this.props.restrictTime.endtime < times.getHours()){
-      alert("Selected time is not within the range")
-    }else{
-    if(data === 'start'){
-      if(this.props.timemode && parseInt(this.props.timemode) === 24){
-        this.setState({
-          starthours: times.getHours(),
-          startminutes: times.getMinutes(),
-        }, this.propagateChange)
-      }else{
-        this.setState({
-          starthours: times.getHours() % 12,
-          startminutes: times.getMinutes(),
-          startsession: times.getHours() >= 12 ? "PM" : "AM",
-        }, this.propagateChange)
-      }
-    }else{
-      if( this.props.timemode && parseInt(this.props.timemode) === 12 && this.state.startdate === this.state.enddate && this.state.starthours > times.getHours() % 12 ){
-        this.setState({
-          endhours: this.state.starthours,
-          endminutes: this.state.startminutes,
-          endsession: this.state.startsession
-        }, this.propagateChange)
-      }else if( this.props.timemode && parseInt(this.props.timemode) === 24 && this.state.startdate === this.state.enddate && this.state.starthours > times.getHours()){
-        this.setState({
-          endhours: this.state.starthours,
-          endminutes: this.state.startminutes,
-          endsession: this.state.startsession
-        }, this.propagateChange)
-      }else{
+    if(this.props.restrictTime && this.props.restrictTime.starttime < times.getHours() && this.props.restrictTime.endtime > times.getHours()){    
+      if(data === 'start'){
         if(this.props.timemode && parseInt(this.props.timemode) === 24){
           this.setState({
-            endhours: times.getHours(),
-            endminutes: times.getMinutes(),
+            starthours: times.getHours(),
+            startminutes: times.getMinutes(),
+            // returnedEndValue: false,
           }, this.propagateChange)
         }else{
-        this.setState({
-          endhours: times.getHours() % 12,
-          endminutes: times.getMinutes(),
-          endsession: times.getHours() >= 12 ? "PM" : "AM"
-        }, this.propagateChange)
+          this.setState({
+            starthours: times.getHours() % 12,
+            startminutes: times.getMinutes(),
+            startsession: times.getHours() >= 12 ? "PM" : "AM",
+            // returnedEndValue: false,
+          }, this.propagateChange)
+        }
+      }else{
+        if( this.props.timemode && parseInt(this.props.timemode) === 12 && this.state.startdate === this.state.enddate && this.state.starthours > times.getHours() % 12 ){
+          this.setState({
+            endhours: this.state.starthours,
+            endminutes: this.state.startminutes,
+            endsession: this.state.startsession,
+            returnedEndValue: true,
+          }, this.propagateChange)
+        }else if( this.props.timemode && parseInt(this.props.timemode) === 24 && this.state.startdate === this.state.enddate && this.state.starthours > times.getHours()){
+          // this.setState({
+          //   endhours: this.state.starthours,
+          //   endminutes: this.state.startminutes,
+          //   endsession: this.state.startsession,
+          //   returnedEndValue: true,
+          // }, this.propagateChange)
+          alert('current time is lesser than start time')
+        }else{
+          if(this.props.timemode && parseInt(this.props.timemode) === 24){
+            this.setState({
+              endhours: times.getHours(),
+              endminutes: times.getMinutes(),
+              returnedEndValue: true,
+            }, this.propagateChange)
+          }else{
+          this.setState({
+            endhours: times.getHours() % 12,
+            endminutes: times.getMinutes(),
+            endsession: times.getHours() >= 12 ? "PM" : "AM",
+            returnedEndValue: true,
+          }, this.propagateChange)
+          }
         }
       }
-    }
+    }else{
+      alert("Selected time is not within the range")
   }
   }
 
@@ -232,6 +241,8 @@ class TimePickerComponent extends React.Component {
         // console.log('greater than pm')
       }else if(this.state.startdate === this.state.enddate && this.props.timemode && parseInt(this.props.timemode) === 24 &&
       this.props.restrictTime && this.props.restrictTime.endtime -1 <= this.state.starthours){
+
+      }else if(this.props.restrictTime && this.props.restrictTime.endtime - 1 <= this.state.starthours){
 
       }else{
         this.setState({
@@ -254,10 +265,10 @@ class TimePickerComponent extends React.Component {
         this.props.restrictTime.endtime - 1 <= this.state.endhours){
 
         }else{
-        this.setState({endhours: this.state.endhours + 1}, this.propagateChange)
+        this.setState({endhours: this.state.endhours + 1, returnedEndValue: true}, this.propagateChange)
         }
     }else if(data === "end" && part === 'minutes'){
-      this.setState({endminutes: this.state.endminutes + 1}, this.propagateChange)
+      this.setState({endminutes: this.state.endminutes + 1, returnedEndValue: true}, this.propagateChange)
     }
   }
 
@@ -294,7 +305,8 @@ class TimePickerComponent extends React.Component {
       }else{
         this.setState({
           endhours: this.state.endhours - 1,
-          endminutes: this.state.startminutes
+          endminutes: this.state.startminutes,
+          returnedEndValue: true
         }, this.propagateChange)
       }
     }else if(data === "end" && part === 'minutes'){
@@ -303,7 +315,7 @@ class TimePickerComponent extends React.Component {
       }else if(this.props.restrictToDayTime && this.state.startsession === this.state.endsession && this.state.starthours === this.state.endhours && this.state.startminutes >= this.state.endminutes){
         // console.log('yes end happen');
       } else{
-        this.setState({endminutes: this.state.endminutes - 1}, this.propagateChange)
+        this.setState({endminutes: this.state.endminutes - 1, returnedEndValue: true}, this.propagateChange)
       }
     }
   }
@@ -329,49 +341,55 @@ class TimePickerComponent extends React.Component {
   }
 
   onTimePress = (data) => {
-    const times = new Date();
-    if(this.props.restrictTime && this.props.restrictTime.endtime < times.getHours()){
-      alert("Selected time is not within the range")
-    }else{
+    if(this.props.restrictTime && this.props.restrictTime.starttime < 12 && this.props.restrictTime.endtime > 12){
       if(data === 'start'){
         this.setState({
           starthours: 12,
           startminutes: 0,
           startsession: "AM",
+          // returnedEndValue: false
         }, this.propagateChange)
       }else{
-        this.setState({
-          endhours: 12,
-          endminutes: 0,
-          endsession: "AM"
-        }, this.propagateChange)
+        console.log('prop prop prop', this.state.starthours, this.state.startminutes)
+        if(this.state.startdate === this.state.enddate && this.props.timemode && parseInt(this.props.timemode) === 24 && this.state.starthours >= 12 && this.state.startminutes > 0 ){
+          alert('endtime is lesser than starttime')
+        }else{
+          this.setState({
+            endhours: 12,
+            endminutes: 0,
+            endsession: "AM",
+            returnedEndValue: true
+          }, this.propagateChange)
+        }
       }
-  }
+    }else{
+      alert("Selected time is not within the range")
+    }
 }
 
   propagateChange = () => {
-    const {starthours, startminutes, startsession, endhours, endminutes, endsession} = this.state;
+    const {starthours, startminutes, startsession, endhours, endminutes, endsession, returnedEndValue} = this.state;
     if(parseInt(this.props.timemode) === 12){
       this.setState({
         starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)} ${startsession}`,
-        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}`
+        endtime: endhours ? `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}` : null
       })
       if (this.props.onChange != null) {
         const date = {
         starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)} ${startsession}`,
-        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}`
+        endtime: returnedEndValue ? `${twoDigits(endhours)}:${twoDigits(endminutes)} ${endsession}` : null
         }
         this.props.onChange(date)
       }
     }else{
       this.setState({
         starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)}`,
-        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)}`
+        endtime: endhours ? `${twoDigits(endhours)}:${twoDigits(endminutes)}` : null
       })
       if (this.props.onChange != null) {
         const date = {
         starttime: `${twoDigits(starthours)}:${twoDigits(startminutes)}`,
-        endtime: `${twoDigits(endhours)}:${twoDigits(endminutes)}`
+        endtime: returnedEndValue ? `${twoDigits(endhours)}:${twoDigits(endminutes)}` : null
         }
         this.props.onChange(date)
       }
