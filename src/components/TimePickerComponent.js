@@ -72,11 +72,11 @@ class TimePickerComponent extends React.Component {
     this.state = {
       select: 'h',
       starthours: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('starthour') : this.getinitialState("time"),
-      endhours: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('endhour') : this.getinitialState("time"),
+      endhours: props.selectedTime && props.selectedTime.endtime ? this.getSelectedValue('endhour') : this.getinitialState("time"),
       startminutes: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('startminute') : time.getMinutes(),
-      endminutes: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('endminute') : time.getMinutes(),
+      endminutes: props.selectedTime && props.selectedTime.endtime ? this.getSelectedValue('endminute') : time.getMinutes(),
       startsession: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('startsession') : this.getinitialState("session"),
-      endsession: props.selectedTime && props.selectedTime.starttime ? this.getSelectedValue('endsession') : this.getinitialState("session"),
+      endsession: props.selectedTime && props.selectedTime.endtime ? this.getSelectedValue('endsession') : this.getinitialState("session"),
       opendate: false,
       opentime: false,
       startdate: props.selectedDate && props.selectedDate.startdate ? props.selectedDate.startdate : null,
@@ -101,7 +101,11 @@ class TimePickerComponent extends React.Component {
     }else if(data === "startsession"){
       return selectedTime.starttime.substr(selectedTime.starttime.length - 2)
     }else{
-      return selectedTime.endtime.substr(selectedTime.endtime.length - 2)
+      if(this.props.timemode && parseInt(this.props.timemode) === 12){
+        return selectedTime.endtime.substr(selectedTime.endtime.length - 2)
+      }else{
+        return null
+      }
     }
   }
 

@@ -42,7 +42,7 @@ const styles = (theme) => ({
     justifyContent: 'center'
   },
   starttext_con: {
-    "& input::-webkit-calendar-picker-indicator, & input::-webkit-calendar-picker-indicator, & input::-webkit-calendar-picker-indicator": {
+    "& input::-webkit-calendar-picker-indicator": {
       display: "none",
       background: "none",
     },
