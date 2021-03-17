@@ -51,7 +51,8 @@ const Menu = (props) => {
     handlers,
     maxNextProps,
     maxPrevProps,
-    restrictDaysProps
+    restrictDaysProps,
+    range
   } = props;
 
   const { startDate, endDate } = dateRange;
@@ -85,22 +86,23 @@ const Menu = (props) => {
           <Grid container className={classes.header} alignItems="center">
             <Grid item className={classes.headerItem}>
               <Typography variant="subtitle1">
-                {startDate ? format(startDate, 'MMMM DD, YYYY') : 'Start Date'}
+                {startDate ? format(startDate, 'MMMM DD, YYYY') : range ? 'Start Date' : "Date"}
               </Typography>
             </Grid>
-            <Grid item className={classes.headerItem}>
+            {range && <><Grid item className={classes.headerItem}>
               <ArrowRightAlt color="action" />
             </Grid>
             <Grid item className={classes.headerItem}>
               <Typography variant="subtitle1">
                 {endDate ? format(endDate, 'MMMM DD, YYYY') : 'End Date'}
               </Typography>
-            </Grid>
+            </Grid></>}
           </Grid>
           <Divider />
           <Grid container direction="row" justify="center" wrap="wrap">
             <Month
               {...commonProps}
+              defaultRange={range}
               value={firstMonth}
               setValue={setFirstMonth}
               navState={[true, canNavigateCloser]}
@@ -109,7 +111,7 @@ const Menu = (props) => {
               onNextIconClick={() => onNextClick(MARKERS.FIRST_MONTH, NavigationAction.Next, 'first')}
               restrictDays={restrictDaysProps}
             />
-            <div className={classes.divider} />
+            {range && <><div className={classes.divider} />
             <Month
               {...commonProps}
               value={secondMonth}
@@ -119,11 +121,11 @@ const Menu = (props) => {
               onPrevIconClick={() => onPrevClick(MARKERS.SECOND_MONTH, NavigationAction.Previous, 'second')}
               onNextIconClick={() => onNextClick(MARKERS.SECOND_MONTH, NavigationAction.Next, 'second')}
               restrictDays={restrictDaysProps}
-            />
+            /></>}
           </Grid>
         </Grid>
         <div className={classes.divider} />
-       {props.includeRelativeDate && <Grid>
+       {props.includeRelativeDate && range && <Grid>
           <DefinedRanges
             selectedRange={dateRange}
             ranges={ranges}

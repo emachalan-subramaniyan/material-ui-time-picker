@@ -39,7 +39,8 @@ const DateRangePicker = (
     maxPrev,
     restrictDays,
     insertedStartDate,
-    insertedEndDate
+    insertedEndDate,
+    defaultRange
   } = props;
 
   const minDateValid = parseOptionalDate(minDate, addYears(today, -10));
@@ -152,6 +153,7 @@ const DateRangePicker = (
       setDateRange(newRange);
     } else {
       setDateRange({ startDate: day, endDate: undefined });
+      !defaultRange && onChange({ startDate: day, endDate: undefined });
     }
     setHoverDay(day);
   };
@@ -193,6 +195,7 @@ const DateRangePicker = (
 
   return open ? (
     <Menu
+      range={defaultRange}
       dateRange={dateRange}
       minDate={minDateValid}
       maxDate={maxDateValid}

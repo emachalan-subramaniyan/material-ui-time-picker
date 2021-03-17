@@ -403,13 +403,14 @@ class TimePickerComponent extends React.Component {
   render () {
     const {
       classes,
+      defaultRange
     } = this.props
     const {  isPm } = formatHours(this.state.hours, '12');
     return (
         <Grid container alignContent="stretch" direction="row" justify="center" wrap="wrap">
           <Paper elevation={3} className={classes.paper_con}>
           <Typography variant="body2" align="center" className={classes.header_title}>
-            Start Time
+            {defaultRange ? "Start Time" : "Time" }
           </Typography>
           <Divider orientation="horizontal" variant="fullWidth" light={true} className={classes.divider_style} />
           <div className={classes.custombtn_style}>
@@ -475,7 +476,7 @@ class TimePickerComponent extends React.Component {
               </div>}
               </div>
         </Paper>
-        <Paper elevation={3} className={classes.paper_con}>
+        {defaultRange && <Paper elevation={3} className={classes.paper_con}>
           <Typography variant="body2" align="center" className={classes.header_title}>
             End Time
           </Typography>
@@ -543,7 +544,7 @@ class TimePickerComponent extends React.Component {
             />
               </div>}
               </div>
-      </Paper>
+      </Paper>}
       </Grid>
     )
   }
