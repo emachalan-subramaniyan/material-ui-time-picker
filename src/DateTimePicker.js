@@ -112,7 +112,7 @@ class DateTimePicker extends React.Component {
     }else{
       this.setState({
         selectedStartDate: data.startDate,
-        selectedEndDate: data.endDate,
+        selectedEndDate: data.startDate,
         startdate: moment(data.startDate).format(this.props.dateFormat),
         enddate: moment(data.startDate).format(this.props.dateFormat)
       });

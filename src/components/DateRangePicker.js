@@ -153,7 +153,7 @@ const DateRangePicker = (
       setDateRange(newRange);
     } else {
       setDateRange({ startDate: day, endDate: undefined });
-      !defaultRange && onChange({ startDate: day, endDate: undefined });
+      !defaultRange && onChange({ startDate: day, endDate: day });
     }
     setHoverDay(day);
   };
