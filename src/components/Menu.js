@@ -71,11 +71,16 @@ const Menu = (props) => {
   }
 
   const onNextClick = (data, nav, item) => {
-    item === 'first' && setState({...state, prev: state.prev - 1});
-    if(item === 'second' && maxNextProps < state.next + 1){
+    if(item === 'first' && range === false || range === undefined){
+      setState({...state, next: state.next + 1});
+      handlers.onMonthNavigate("firstMonth", 1)
     }else{
-      item === 'second' && setState({...state, next: state.next + 1});
-      handlers.onMonthNavigate(data, nav)
+      item === 'first' && setState({...state, prev: state.prev - 1});
+      if(item === 'second' && maxNextProps < state.next + 1){
+      }else{
+        item === 'second' && setState({...state, next: state.next + 1});
+        handlers.onMonthNavigate(data, nav)
+      }
     }
   }
 
@@ -105,7 +110,7 @@ const Menu = (props) => {
               defaultRange={range}
               value={firstMonth}
               setValue={setFirstMonth}
-              navState={[true, canNavigateCloser]}
+              navState={[true, range ? canNavigateCloser : true ]}
               marker={MARKERS.FIRST_MONTH}
               onPrevIconClick={() => onPrevClick(MARKERS.FIRST_MONTH, NavigationAction.Previous, 'first')}
               onNextIconClick={() => onNextClick(MARKERS.FIRST_MONTH, NavigationAction.Next, 'first')}

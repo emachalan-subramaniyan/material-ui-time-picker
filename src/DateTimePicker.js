@@ -67,7 +67,9 @@ class DateTimePicker extends React.Component {
       defaultStartValue: null,
       defaultEndVale: null,
       startTextFocused: false,
-      endTextFocused: false
+      endTextFocused: false,
+      selectedEndDate: null,
+      selectedStartDate: null
     };
     this.startInput = React.createRef();
     this.endInput = React.createRef();
@@ -95,6 +97,8 @@ class DateTimePicker extends React.Component {
         endTime: this.state.endtime
       };
       this.setState({
+        selectedStartDate: startDate,
+        selectedEndDate: endDate,
         startdate: moment(data.startDate).format(this.props.dateFormat),
         enddate: moment(data.endDate).format(this.props.dateFormat)
       });
@@ -107,6 +111,8 @@ class DateTimePicker extends React.Component {
       });
     }else{
       this.setState({
+        selectedStartDate: data.startDate,
+        selectedEndDate: data.endDate,
         startdate: moment(data.startDate).format(this.props.dateFormat),
         enddate: moment(data.startDate).format(this.props.dateFormat)
       });
@@ -124,6 +130,8 @@ class DateTimePicker extends React.Component {
     const { starttime, endtime } = data;
     if(this.props.range){
       const value = {
+        selectedStartDate: this.state.selectedStartDate,
+        selectedEndDate: this.state.selectedEndDate,
         startDate: this.state.startdate,
         endDate: this.state.enddate,
         startTime: starttime,
@@ -159,6 +167,8 @@ class DateTimePicker extends React.Component {
       };
       this.setState(
         {
+          selectedStartDate: data,
+          selectedEndDate: this.state.selectedEndDate,
           startdate: date,
           starttime: time,
           enddate: this.state.enddate,
@@ -192,6 +202,8 @@ class DateTimePicker extends React.Component {
       };
       this.setState(
         {
+          selectedStartDate: null,
+          selectedEndDate: this.state.selectedEndDate,
           startdate: null,
           starttime: starthour,
           enddate: this.state.enddate,
@@ -223,6 +235,8 @@ class DateTimePicker extends React.Component {
       this.endInput.type = "text";
       this.setState(
         {
+          selectedStartDate: this.state.selectedStartDate,
+          selectedEndDate: this.state.selectedEndDate,
           startdate: this.state.startdate,
           starttime: this.state.starttime,
           enddate: date,
@@ -256,6 +270,8 @@ class DateTimePicker extends React.Component {
       };
       this.setState(
         {
+          selectedStartDate: this.state.selectedStartDate,
+          selectedEndDate: null,
           startdate: this.state.startdate,
           starttime: this.state.starttime,
           enddate: null,
@@ -391,8 +407,8 @@ class DateTimePicker extends React.Component {
           <div>
             <DateRangePickerExporter
               defaultRange={range}
-              insertedStartDate={this.state.startdate}
-              insertedEndDate={this.state.enddate}
+              insertedStartDate={this.state.selectedStartDate}
+              insertedEndDate={this.state.selectedEndDate}
               open={this.state.opendate}
               closeOnClickOutside
               toggle={this.toggle}
@@ -409,8 +425,8 @@ class DateTimePicker extends React.Component {
             <TimePickerExporter
               defaultRange={range}
               selectedDate={{
-                startdate: this.state.startdate,
-                enddate: this.state.enddate
+                startdate: this.state.selectedStartDate,
+                enddate: this.state.selectedEndDate
               }}
               selectedTime={{
                 starttime: this.state.starttime,

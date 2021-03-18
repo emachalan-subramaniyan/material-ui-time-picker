@@ -160,8 +160,13 @@ const DateRangePicker = (
 
   const onMonthNavigate = (marker, action) => {
     if (marker === MARKERS.FIRST_MONTH) {
-      const firstNew = addMonths(firstMonth, action);
-      if (isBefore(firstNew, secondMonth)) setFirstMonth(firstNew);
+      if(defaultRange === false || defaultRange === undefined){
+        const firstNew = addMonths(firstMonth, action);
+        setFirstMonth(firstNew);
+      }else{
+        const firstNew = addMonths(firstMonth, action);
+        if (isBefore(firstNew, secondMonth)) setFirstMonth(firstNew);
+      }
     } else {
       const secondNew = addMonths(secondMonth, action);
       if (isBefore(firstMonth, secondNew)) setSecondMonth(secondNew);
