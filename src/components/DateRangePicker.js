@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   addMonths,
   isSameDay,
@@ -8,24 +8,22 @@ import {
   isSameMonth,
   addYears,
   max,
-  min,
-} from 'date-fns';
-import moment from 'moment';
+  min
+} from "date-fns";
+import moment from "moment";
 
-import { getValidatedMonths, parseOptionalDate } from '../utils';
+import { getValidatedMonths, parseOptionalDate } from "../utils";
 
-import { defaultRanges } from '../defaults';
+import { defaultRanges } from "../defaults";
 
-import Menu from './Menu';
+import Menu from "./Menu";
 
 export const MARKERS = {
-  FIRST_MONTH: 'firstMonth',
-  SECOND_MONTH: 'secondMonth',
+  FIRST_MONTH: "firstMonth",
+  SECOND_MONTH: "secondMonth"
 };
 
-const DateRangePicker = (
-  props
-) => {
+const DateRangePicker = props => {
   const today = new Date();
 
   const {
@@ -40,7 +38,8 @@ const DateRangePicker = (
     restrictDays,
     insertedStartDate,
     insertedEndDate,
-    defaultRange
+    defaultRange,
+    defaultValue,
   } = props;
 
   const minDateValid = parseOptionalDate(minDate, addYears(today, -10));
@@ -48,30 +47,45 @@ const DateRangePicker = (
   const [intialFirstMonth, initialSecondMonth] = getValidatedMonths(
     initialDateRange || {},
     minDateValid,
-    maxDateValid,
+    maxDateValid
   );
-  
+
   const [dateRange, setDateRange] = React.useState({ ...initialDateRange });
   const [hoverDay, setHoverDay] = React.useState();
   const [firstMonth, setFirstMonth] = React.useState(intialFirstMonth || today);
   const [secondMonth, setSecondMonth] = React.useState(
-    initialSecondMonth || addMonths(firstMonth, 1),
-    );
+    initialSecondMonth || addMonths(firstMonth, 1)
+  );
 
   React.useEffect(() => {
-    if(insertedStartDate){
+    if (defaultValue && !insertedStartDate && !insertedStartDate) {
+      if(moment(defaultValue, "MM/DD/YYYY").isValid()){
+        let data = {
+          startDate: new Date(defaultValue),
+          label: null,
+          endDate: new Date(defaultValue)
+        };
+        setDateRange(data);
+        setFirstMonth(new Date(defaultValue));
+        setSecondMonth(new Date(defaultValue))
+      }
+    }
+  }, [defaultValue]);
+
+  React.useEffect(() => {
+    if (insertedStartDate) {
       let d = new Date(insertedStartDate);
       let date = d.getDate();
       let month = d.getMonth() + 1;
       let year = d.getFullYear();
-      let newDate = month+'/'+date+'/'+year
-      setFirstMonth(new Date(newDate))
+      let newDate = month + "/" + date + "/" + year;
+      setFirstMonth(new Date(newDate));
     }
-  },[insertedStartDate]);
+  }, [insertedStartDate]);
 
   React.useEffect(() => {
-    if(insertedStartDate && insertedEndDate){
-      if(compare(insertedEndDate,insertedStartDate) >= 0 ){
+    if (insertedStartDate && insertedEndDate) {
+      if (compare(insertedEndDate, insertedStartDate) >= 0) {
         let startdates = new Date(insertedStartDate);
         let enddates = new Date(insertedEndDate);
         let startdate = startdates.getDate();
@@ -80,50 +94,50 @@ const DateRangePicker = (
         let enddate = enddates.getDate();
         let endmonth = enddates.getMonth() + 1;
         let endyear = enddates.getFullYear();
-        let startnewDate = startmonth+'/'+startdate+'/'+startyear  
-        let endnewDate = endmonth+'/'+enddate+'/'+endyear
+        let startnewDate = startmonth + "/" + startdate + "/" + startyear;
+        let endnewDate = endmonth + "/" + enddate + "/" + endyear;
         let data = {
           startDate: new Date(startnewDate),
           label: null,
           endDate: new Date(endnewDate)
-        }
-        setDateRange(data)
-        setSecondMonth(new Date(endnewDate))
-      }else{
+        };
+        setDateRange(data);
+        setSecondMonth(new Date(endnewDate));
+      } else {
         let data = {
           startDate: null,
           label: null,
           endDate: null
-        }
-        setDateRange(data)
+        };
+        setDateRange(data);
       }
     }
-  },[insertedStartDate && insertedEndDate]);
-  
-    const { startDate, endDate } = dateRange;
-    
-    const compare = (dateTimeA, dateTimeB) => {
-      var momentA = moment(dateTimeA,"DD/MM/YYYY");
-      var momentB = moment(dateTimeB,"DD/MM/YYYY");
-      if (momentA > momentB) return 1;
-      else if (momentA < momentB) return -1;
-      else return 0;
-    }
+  }, [insertedStartDate && insertedEndDate]);
+
+  const { startDate, endDate } = dateRange;
+
+  const compare = (dateTimeA, dateTimeB) => {
+    var momentA = moment(dateTimeA, "DD/MM/YYYY");
+    var momentB = moment(dateTimeB, "DD/MM/YYYY");
+    if (momentA > momentB) return 1;
+    else if (momentA < momentB) return -1;
+    else return 0;
+  };
 
   // handlers
-  const setFirstMonthValidated = (date) => {
+  const setFirstMonthValidated = date => {
     if (isBefore(date, secondMonth)) {
       setFirstMonth(date);
     }
   };
 
-  const setSecondMonthValidated = (date) => {
+  const setSecondMonthValidated = date => {
     if (isAfter(date, firstMonth)) {
       setSecondMonth(date);
     }
   };
 
-  const setDateRangeValidated = (range) => {
+  const setDateRangeValidated = range => {
     let { startDate: newStart, endDate: newEnd } = range;
 
     if (newStart && newEnd) {
@@ -134,7 +148,9 @@ const DateRangePicker = (
       onChange(range);
 
       setFirstMonth(newStart);
-      setSecondMonth(isSameMonth(newStart, newEnd) ? addMonths(newStart, 1) : newEnd);
+      setSecondMonth(
+        isSameMonth(newStart, newEnd) ? addMonths(newStart, 1) : newEnd
+      );
     } else {
       const emptyRange = {};
 
@@ -146,7 +162,7 @@ const DateRangePicker = (
     }
   };
 
-  const onDayClick = (day) => {
+  const onDayClick = day => {
     if (startDate && !endDate && !isBefore(day, startDate)) {
       const newRange = { startDate, endDate: day };
       onChange(newRange);
@@ -160,10 +176,10 @@ const DateRangePicker = (
 
   const onMonthNavigate = (marker, action) => {
     if (marker === MARKERS.FIRST_MONTH) {
-      if(defaultRange === false || defaultRange === undefined){
+      if (defaultRange === false || defaultRange === undefined) {
         const firstNew = addMonths(firstMonth, action);
         setFirstMonth(firstNew);
-      }else{
+      } else {
         const firstNew = addMonths(firstMonth, action);
         if (isBefore(firstNew, secondMonth)) setFirstMonth(firstNew);
       }
@@ -173,7 +189,7 @@ const DateRangePicker = (
     }
   };
 
-  const onDayHover = (date) => {
+  const onDayHover = date => {
     if (startDate && !endDate) {
       if (!hoverDay || !isSameDay(date, hoverDay)) {
         setHoverDay(date);
@@ -182,20 +198,21 @@ const DateRangePicker = (
   };
 
   // helpers
-  const inHoverRange = (day) => (startDate
-      && !endDate
-      && hoverDay
-      && isAfter(hoverDay, startDate)
-      && isWithinRange(day, startDate, hoverDay));
+  const inHoverRange = day =>
+    startDate &&
+    !endDate &&
+    hoverDay &&
+    isAfter(hoverDay, startDate) &&
+    isWithinRange(day, startDate, hoverDay);
 
   const helpers = {
-    inHoverRange,
+    inHoverRange
   };
 
   const handlers = {
     onDayClick,
     onDayHover,
-    onMonthNavigate,
+    onMonthNavigate
   };
 
   return open ? (

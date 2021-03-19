@@ -69,11 +69,22 @@ class DateTimePicker extends React.Component {
       startTextFocused: false,
       endTextFocused: false,
       selectedEndDate: null,
-      selectedStartDate: null
+      selectedStartDate: null,
+      defaultValue: props.defaultValue,
     };
     this.startInput = React.createRef();
     this.endInput = React.createRef();
   }
+
+  componentDidMount() {
+    if(this.props.defaultValue && this.props.includeDate && this.props.includeTime && !this.props.range){
+      this.setState({
+        startdate: this.props.defaultValue.split(" ")[0],
+        starttime: this.props.defaultValue.substring(this.props.defaultValue.indexOf(' ') + 1),
+        selectedStartDate: new Date(this.props.defaultValue.split(" ")[0])
+      })
+    }
+}
 
   onDateIconClick = () => {
     this.setState({ opendate: !this.state.opendate, opentime: false });
@@ -88,19 +99,19 @@ class DateTimePicker extends React.Component {
   timetoggle = () => this.setState({ opentime: !this.state.opentime });
 
   onDateChange = data => {
-    if(this.props.range){
+    if (this.props.range) {
       const { startDate, endDate } = data;
       const value = {
         startDate: startDate,
         endDate: endDate,
-        startTime: this.state.starttime,
-        endTime: this.state.endtime
+        startTime: this.props.dateFormat ? moment(startDate).format(this.props.dateFormat) : this.state.starttime,
+        endTime: this.props.dateFormat ? moment(endDate).format(this.props.dateFormat) : this.state.endtime
       };
       this.setState({
         selectedStartDate: startDate,
         selectedEndDate: endDate,
-        startdate: moment(data.startDate).format(this.props.dateFormat),
-        enddate: moment(data.endDate).format(this.props.dateFormat)
+        startdate: moment(startDate).format(this.props.dateFormat),
+        enddate: moment(endDate).format(this.props.dateFormat)
       });
       this.props.onDateChange(value);
       this.setState({
@@ -109,14 +120,14 @@ class DateTimePicker extends React.Component {
         starttime: null,
         endtime: null
       });
-    }else{
+    } else {
       this.setState({
         selectedStartDate: data.startDate,
         selectedEndDate: data.startDate,
         startdate: moment(data.startDate).format(this.props.dateFormat),
         enddate: moment(data.startDate).format(this.props.dateFormat)
       });
-      this.props.onDateChange({date: data.startDate, time: null});
+      this.props.onDateChange({ date: this.props.dateFormat ? moment(data.startDate).format(this.props.dateFormat) : data.startDate, time: null });
       this.setState({
         opendate: !this.state.opendate,
         opentime: false,
@@ -128,7 +139,7 @@ class DateTimePicker extends React.Component {
 
   onTimeChange = data => {
     const { starttime, endtime } = data;
-    if(this.props.range){
+    if (this.props.range) {
       const value = {
         selectedStartDate: this.state.selectedStartDate,
         selectedEndDate: this.state.selectedEndDate,
@@ -138,10 +149,10 @@ class DateTimePicker extends React.Component {
         endTime: endtime
       };
       this.props.onDateChange(value);
-    }else{
+    } else {
       const value = {
         date: this.state.startdate,
-        time: starttime,
+        time: starttime
       };
       this.setState({ starttime: starttime, endtime: starttime });
       this.props.onDateChange(value);
@@ -285,36 +296,68 @@ class DateTimePicker extends React.Component {
 
   starttextboxValue = () => {
     if (this.props.includeDate) {
-      if (this.state.startdate && this.state.starttime) {
-        return this.state.startdate + " " + this.state.starttime;
-      } else if (this.state.startdate && this.state.starttime === null) {
-        return this.state.startdate;
-      } else {
-        return undefined;
+      if (
+        this.state.defaultValue &&
+        !this.state.startdate &&
+        !this.state.starttime
+        ) {
+          return this.state.defaultValue;
+        } else {
+        if (this.state.startdate && this.state.starttime) {
+          return this.state.startdate + " " + this.state.starttime;
+        } else if (this.state.startdate && this.state.starttime === null) {
+          return this.state.startdate;
+        } else {
+          return undefined;
+        }
       }
     } else {
-      if (this.state.starttime) {
-        return this.state.starttime;
+      if (
+        this.state.defaultValue &&
+        !this.state.startdate &&
+        !this.state.starttime
+      ) {
+        return this.state.defaultValue;
       } else {
-        return undefined;
+        if (this.state.starttime) {
+          return this.state.starttime;
+        } else {
+          return undefined;
+        }
       }
     }
   };
 
   endtextboxValue = () => {
     if (this.props.includeDate) {
-      if (this.state.enddate && this.state.endtime) {
-        return this.state.enddate + " " + this.state.endtime;
-      } else if (this.state.enddate && this.state.endtime === null) {
-        return this.state.enddate;
+      if (
+        this.state.defaultValue &&
+        !this.state.startdate &&
+        !this.state.starttime
+      ) {
+        return this.state.defaultValue;
       } else {
-        return undefined;
+        if (this.state.enddate && this.state.endtime) {
+          return this.state.enddate + " " + this.state.endtime;
+        } else if (this.state.enddate && this.state.endtime === null) {
+          return this.state.enddate;
+        } else {
+          return undefined;
+        }
       }
     } else {
-      if (this.state.endtime) {
-        return this.state.endtime;
+      if (
+        this.state.defaultValue &&
+        !this.state.startdate &&
+        !this.state.starttime
+      ) {
+        return this.state.defaultValue;
       } else {
-        return undefined;
+        if (this.state.endtime) {
+          return this.state.endtime;
+        } else {
+          return undefined;
+        }
       }
     }
   };
@@ -326,7 +369,10 @@ class DateTimePicker extends React.Component {
       startdate: null,
       starttime: null,
       enddate: null,
-      endtime: null
+      endtime: null,
+      defaultValue: null,
+      selectedStartDate: null,
+      selectedEndDate: null
     });
   };
 
@@ -368,36 +414,39 @@ class DateTimePicker extends React.Component {
               <AccessAlarm onClick={() => this.onTimeIconClick()} />
             )}
           </div>
-          {range && <div className={classes.textinput_style}>
-            <TextField
-              id="enddatetime"
-              className={classes.starttext_con}
-              inputRef={d => (this.endInput = d)}
-              placeholder={
-                this.props.endPlaceholder && this.props.endPlaceholder
-              }
-              type="text"
-              onFocus={() => {
-                (this.endInput.disabled = false),
-                  (this.endInput.type = this.props.includeDate
-                    ? "datetime-local"
-                    : "time");
-              }}
-              onBlur={() => {
-                (this.endInput.type = "text"), (this.endInput.disabled = false);
-              }}
-              value={this.endtextboxValue()}
-              name="enddate"
-              disabled={false}
-              onChange={event => this.onEndDateType(event.target.value)}
-            />
-            {this.props.includeDate && (
-              <Event onClick={() => this.onDateIconClick()} />
-            )}
-            {this.props.includeTime && (
-              <AccessAlarm onClick={() => this.onTimeIconClick()} />
-            )}
-          </div>}
+          {range && (
+            <div className={classes.textinput_style}>
+              <TextField
+                id="enddatetime"
+                className={classes.starttext_con}
+                inputRef={d => (this.endInput = d)}
+                placeholder={
+                  this.props.endPlaceholder && this.props.endPlaceholder
+                }
+                type="text"
+                onFocus={() => {
+                  (this.endInput.disabled = false),
+                    (this.endInput.type = this.props.includeDate
+                      ? "datetime-local"
+                      : "time");
+                }}
+                onBlur={() => {
+                  (this.endInput.type = "text"),
+                    (this.endInput.disabled = false);
+                }}
+                value={this.endtextboxValue()}
+                name="enddate"
+                disabled={false}
+                onChange={event => this.onEndDateType(event.target.value)}
+              />
+              {this.props.includeDate && (
+                <Event onClick={() => this.onDateIconClick()} />
+              )}
+              {this.props.includeTime && (
+                <AccessAlarm onClick={() => this.onTimeIconClick()} />
+              )}
+            </div>
+          )}
           <div className={classes.close_style}>
             <CloseIcon onClick={() => this.onClearClick()} />
           </div>
@@ -407,6 +456,7 @@ class DateTimePicker extends React.Component {
           <div>
             <DateRangePickerExporter
               defaultRange={range}
+              defaultValue={this.props.includeDate && this.props.includeTime && this.state.defaultValue ? this.state.defaultValue.split(" ")[0] : this.state.defaultValue}
               insertedStartDate={this.state.selectedStartDate}
               insertedEndDate={this.state.selectedEndDate}
               open={this.state.opendate}
@@ -416,7 +466,9 @@ class DateTimePicker extends React.Component {
               maxPrev={this.props.maxPrev}
               restrictDays={this.props.restrictDays}
               onChange={range => this.onDateChange(range)}
+              dateFormat={this.props.dateFormat}
               includeRelativeDate={this.props.includeRelativeDate}
+              includeTime={this.props.includeTime}
             />
           </div>
         )}
@@ -436,6 +488,8 @@ class DateTimePicker extends React.Component {
               closeOnClickTimeOutside
               timetoggle={this.timetoggle}
               includeTime={this.props.includeTime}
+              includeDate={this.props.includeDate}
+              defaultValue={this.props.includeDate && this.props.includeTime && this.state.defaultValue ? this.state.defaultValue.substring(this.state.defaultValue.indexOf(' ') + 1) : this.state.defaultValue}
               restrictToDayTime={this.props.restrictToDayTime}
               timemode={this.props.timemode}
               restrictTime={this.props.restrictTime}
