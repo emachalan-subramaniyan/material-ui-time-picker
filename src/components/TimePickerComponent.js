@@ -297,8 +297,8 @@ class TimePickerComponent extends React.Component {
 
   onNowPress = data => {
     const times = new Date();
+    if(this.props.restrictTime){
     if (
-      this.props.restrictTime &&
       this.props.restrictTime.starttime < times.getHours() &&
       this.props.restrictTime.endtime > times.getHours()
     ) {
@@ -345,12 +345,6 @@ class TimePickerComponent extends React.Component {
           this.state.startdate === this.state.enddate &&
           this.state.starthours > times.getHours()
         ) {
-          // this.setState({
-          //   endhours: this.state.starthours,
-          //   endminutes: this.state.startminutes,
-          //   endsession: this.state.startsession,
-          //   returnedEndValue: true,
-          // }, this.propagateChange)
           alert("current time is lesser than start time");
         } else {
           if (this.props.timemode && parseInt(this.props.timemode) === 24) {
@@ -377,6 +371,29 @@ class TimePickerComponent extends React.Component {
       }
     } else {
       alert("Selected time is not within the range");
+    }
+    }else{
+      if(data === "start"){
+        this.setState(
+            {
+              starthours: times.getHours() % 12,
+              startminutes: times.getMinutes(),
+              startsession: times.getHours() >= 12 ? "PM" : "AM"
+              // returnedEndValue: false,
+            },
+            this.propagateChange
+          );
+      }else{
+        this.setState(
+          {
+            endhours: times.getHours() % 12,
+            endminutes: times.getMinutes(),
+            endsession: times.getHours() >= 12 ? "PM" : "AM",
+            returnedEndValue: true
+          },
+          this.propagateChange
+        );
+      }
     }
   };
 
@@ -572,8 +589,8 @@ class TimePickerComponent extends React.Component {
   };
 
   onTimePress = data => {
+    if(this.props.restrictTime){
     if (
-      this.props.restrictTime &&
       this.props.restrictTime.starttime < 12 &&
       this.props.restrictTime.endtime > 12
     ) {
@@ -610,6 +627,29 @@ class TimePickerComponent extends React.Component {
       }
     } else {
       alert("Selected time is not within the range");
+    }
+    }else{
+      if(data === 'start'){
+         this.setState(
+          {
+            starthours: 12,
+            startminutes: 0,
+            startsession: "AM"
+            // returnedEndValue: false
+          },
+          this.propagateChange
+        );
+      }else{
+        this.setState(
+            {
+              endhours: 12,
+              endminutes: 0,
+              endsession: "AM",
+              returnedEndValue: true
+            },
+            this.propagateChange
+          );
+      }
     }
   };
 
