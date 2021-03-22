@@ -113,7 +113,7 @@ class DateTimePicker extends React.Component {
         startdate: moment(startDate).format(this.props.dateFormat),
         enddate: moment(endDate).format(this.props.dateFormat)
       });
-      this.props.onDateChange(value);
+      this.props.onChange(value);
       this.setState({
         opendate: !this.state.opendate,
         opentime: false,
@@ -127,7 +127,7 @@ class DateTimePicker extends React.Component {
         startdate: moment(data.startDate).format(this.props.dateFormat),
         enddate: moment(data.startDate).format(this.props.dateFormat)
       });
-      this.props.onDateChange({ date: this.props.dateFormat ? moment(data.startDate).format(this.props.dateFormat) : data.startDate, time: null });
+      this.props.onChange({ date: this.props.dateFormat ? moment(data.startDate).format(this.props.dateFormat) : data.startDate, time: null });
       this.setState({
         opendate: !this.state.opendate,
         opentime: false,
@@ -148,14 +148,14 @@ class DateTimePicker extends React.Component {
         startTime: starttime,
         endTime: endtime
       };
-      this.props.onDateChange(value);
+      this.props.onChange(value);
     } else {
       const value = {
         date: this.state.startdate,
         time: starttime
       };
       this.setState({ starttime: starttime, endtime: starttime });
-      this.props.onDateChange(value);
+      this.props.onChange(value);
     }
   };
 

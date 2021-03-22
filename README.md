@@ -16,19 +16,27 @@ npm i --save material-ui-time-picker
 There are multiple ways to use this component to allow greater flexibility. This is the most basic usage that behaves similar to the [Material-UI 0.x time picker][legacy-time-picker]:
 
 ```jsx
-import TimeInput from 'material-ui-time-picker'
+import DateTimePicker from 'material-ui-time-picker'
 
 // uncontrolled input
-<TimeInput
-  mode='12h'
-  onChange={(time) => this.handleChange(time)}
+<DateTimePicker
+  range={false}
+  includeDate={true}
+  includeTime={true}
+  timemode="12h"
+  dateFormat={"DD/MM/YYYY"}
+  onChange={data => console.log("data onchange", data)}
 />
 
 // controlled input
-<TimeInput
-  mode='12h'
-  value={this.state.time}
-  onChange={(time) => this.handleChange(time)}
+<DateTimePicker
+  range={false}
+  includeDate={true}
+  includeTime={true}
+  defaultValue={"09/10/2021 09:10 AM"}
+  timemode="12h"
+  dateFormat={"DD/MM/YYYY"}
+  onChange={data => console.log("data onchange", data)}
 />
 ```
 
@@ -37,19 +45,20 @@ For detailed documentation, take a look into the [styleguide][]. The source code
 ## TimeInput Properties
 |Name|Type|Default|Description|
 |---|---|---|---|
-|autoOk|`bool`|`false`|If true, automatically accept and close the picker on set minutes.|
-|cancelLabel|`string`|`'Cancel'`|Override the label of the cancel button.|
-|ClockProps|`object`||Properties to pass down to the Clock component.|
-|defaultValue|`Date`||This default value overrides initialTime and placeholder.|
-|initialTime|`Date`||The default value for the time picker.|
-|inputComponent|`elementType`|`Input`|The component used for the input. Either a string to use a DOM element or a component.|
-|placeholder|`string`||The placeholder value for the time picker before a time has been selected.|
-|mode|`enum: '12h' '24h'`|`'12h'`|Sets the clock mode, 12-hour or 24-hour clocks are supported.|
-|okLabel|`string`|`'Ok'`|Override the label of the ok button.|
-|onChange|`func`||Callback that is called with the new date (as Date instance) when the value is changed.|
-|openOnMount|`bool`||If true, automatically opens the dialog when the component is mounted.|
-|TimePickerProps|`object`||Properties to pass down to the TimePicker component.|
-|value|`Date`||The value of the time picker, for use in controlled mode.|
+|range|`bool`|`false`|If true, its enable start and end date range picker.|
+|includeDate|`bool`|`false`|Enable daterangepicker in the date range.|
+|includeTime|`bool`|`false`|Enable timepicker in the date range.|
+|defaultValue|`Object`|`null`|This default value overrides initialTime and placeholder.|
+|includeRelativeDate|`bool`|`false`|Enable related date in the date range.|
+|startPlaceholder|`Object`|`null`|State date placeholder text.|
+|endPlaceholder|`Object`|`null`|End date placeholder text.|
+|timemode|`Object`|`12hrs`|Used for whether time mode is 12hrs/24hrs.|
+|maxPrev|`Object`|`null`|Maximum time allowed in previous navigation.|
+|maxNext|`Object`|`null`|Maximum time allowed in next navigation.|
+|restrictTime|`Object`|`null`|User for restrict start time and end time. Ex{starttime: 10, endtime: 18}.|
+|restrictDays|`Object`|`null`|User for restrict start day and end day. Ex{firstday: 'Mo', lastday: 'Th'}, Available Options: {'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'}", "Object", "null".|
+|dateFormat|`Object`|`null`|Format date(example 'DD/MM/YYYY').|
+|onChange|`function`|`null`|function return selected date and time range value.|
 
 Note: `TimeInput` behaves like Material-UI's `Input` component and can be used inside `FormControl`s.
 
