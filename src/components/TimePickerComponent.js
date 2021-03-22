@@ -147,7 +147,7 @@ class TimePickerComponent extends React.Component {
 
   getinitialState = data => {
     const { includeTime, defaultValue } = this.props;
-    let session = defaultValue.split(" ")[1]
+    let session = defaultValue && defaultValue.split(" ")[1]
     if (data === "session" && includeTime && defaultValue && moment(defaultValue, "LT").isValid()) {
       if(session){
         return session
@@ -161,10 +161,10 @@ class TimePickerComponent extends React.Component {
       let minutes = parseInt(defaultValue.split(":")[1])
       return minutes;
     }else {
-      const defaultValue = new Date();
-      defaultValue.setSeconds(0);
-      defaultValue.setMilliseconds(0);
-      const time = this.props.value || defaultValue;
+      const defaultvalue = new Date();
+      defaultvalue.setSeconds(0);
+      defaultvalue.setMilliseconds(0);
+      const time = this.props.value || defaultvalue;
       if (data === "time") {
         if (this.props.timemode && parseInt(this.props.timemode) === 24) {
           if (
