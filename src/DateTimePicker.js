@@ -185,7 +185,7 @@ class DateTimePicker extends React.Component {
           enddate: this.state.enddate,
           endtime: this.state.endtime
         },
-        this.props.onDateChange(value)
+        this.props.onChange(value)
       );
     } else {
       let starthour = null;
@@ -220,7 +220,7 @@ class DateTimePicker extends React.Component {
           enddate: this.state.enddate,
           endtime: this.state.endtime
         },
-        this.props.onDateChange(value)
+        this.props.onChange(value)
       );
     }
     this.endInput.focus();
@@ -253,7 +253,7 @@ class DateTimePicker extends React.Component {
           enddate: date,
           endtime: time
         },
-        this.props.onDateChange(value)
+        this.props.onChange(value)
       );
     } else {
       let endhour = null;
@@ -288,7 +288,7 @@ class DateTimePicker extends React.Component {
           enddate: null,
           endtime: endhour
         },
-        this.props.onDateChange(value)
+        this.props.onChange(value)
       );
     }
     this.endInput.disabled = true;
