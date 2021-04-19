@@ -51,11 +51,7 @@ import DateTimePicker from 'material-ui-time-picker'
   includeRelativeDate
   startPlaceholder={"Start Date & Time"}
   endPlaceholder={"End Date & Time"}
-  // restrictToDayTime={true}
   timemode="12h"
-  // maxPrev={5}
-  // maxNext={2}
-  // restrictTime={{starttime: 10, endtime: 20}}
   restrictDays={{firstday: 'Su', lastday: 'Sa'}}
   dateFormat={'DD/MM/YYYY'}
   onDateChange={(data) => console.log('on data onchange', data)}
@@ -69,11 +65,7 @@ import DateTimePicker from 'material-ui-time-picker'
   includeRelativeDate
   startPlaceholder={"Start Date & Time"}
   endPlaceholder={"End Date & Time"}
-  // restrictToDayTime={true}
   timemode="24h"
-  // maxPrev={5}
-  // maxNext={2}
-  // restrictTime={{starttime: 10, endtime: 20}}
   restrictDays={{firstday: 'Su', lastday: 'Sa'}}
   dateFormat={'DD/MM/YYYY'}
   onDateChange={(data) => console.log('on data onchange', data)}
@@ -124,9 +116,6 @@ import DateTimePicker from 'material-ui-time-picker'
   endPlaceholder={"End Date & Time"}
   restrictToDayTime={true}
   timemode="12h"
-  // maxPrev={5}
-  // maxNext={2}
-  // restrictTime={{starttime: 10, endtime: 20}}
   restrictDays={{firstday: 'Su', lastday: 'Sa'}}
   dateFormat={'DD/MM/YYYY'}
   onDateChange={(data) => console.log('on data onchange', data)}
@@ -141,9 +130,6 @@ import DateTimePicker from 'material-ui-time-picker'
   endPlaceholder={"End Date & Time"}
   restrictToDayTime={true}
   timemode="24h"
-  // maxPrev={5}
-  // maxNext={2}
-  // restrictTime={{starttime: 10, endtime: 20}}
   restrictDays={{firstday: 'Su', lastday: 'Sa'}}
   dateFormat={'DD/MM/YYYY'}
   onDateChange={(data) => console.log('on data onchange', data)}
@@ -158,8 +144,6 @@ import DateTimePicker from 'material-ui-time-picker'
   endPlaceholder={"End Date & Time"}
   restrictToDayTime={true}
   timemode="12h"
-  // maxPrev={5}
-  // maxNext={2}
   restrictTime={{starttime: 10, endtime: 20}}
   restrictDays={{firstday: 'Su', lastday: 'Sa'}}
   dateFormat={'DD/MM/YYYY'}
