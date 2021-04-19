@@ -1,11 +1,4 @@
 # material-ui-time-picker
-[![npm Package](https://img.shields.io/npm/v/material-ui-time-picker.svg)](https://www.npmjs.com/package/material-ui-time-picker)
-[![Build Status](https://travis-ci.org/TeamWertarbyte/material-ui-time-picker.svg?branch=master)](https://travis-ci.org/TeamWertarbyte/material-ui-time-picker)
-[![Coverage Status](https://coveralls.io/repos/github/TeamWertarbyte/material-ui-time-picker/badge.svg?branch=master)](https://coveralls.io/github/TeamWertarbyte/material-ui-time-picker?branch=master)
-
-This project provides a [time picker][time-picker-spec] for [Material-UI][material-ui].
-
-![Demo](demo.gif)
 
 ## Installation
 ```
@@ -18,25 +11,212 @@ There are multiple ways to use this component to allow greater flexibility. This
 ```jsx
 import DateTimePicker from 'material-ui-time-picker'
 
-// uncontrolled input
+// Range Included
 <DateTimePicker
-  range={false}
+  range={true}
   includeDate={true}
   includeTime={true}
+  includeRelativeDate={true}
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
   timemode="12h"
-  dateFormat={"DD/MM/YYYY"}
-  onChange={data => console.log("data onchange", data)}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Mo', lastday: 'Fr'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
 />
 
-// controlled input
+// Restrict days to specific days
 <DateTimePicker
-  range={false}
   includeDate={true}
   includeTime={true}
-  defaultValue={"09/10/2021 09:10 AM"}
+  includeRelativeDate={true}
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
   timemode="12h"
-  dateFormat={"DD/MM/YYYY"}
-  onChange={data => console.log("data onchange", data)}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Mo', lastday: 'Fr'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Both Date and Time Picker in timemode 12h
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  // restrictToDayTime={true}
+  timemode="12h"
+  // maxPrev={5}
+  // maxNext={2}
+  // restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Both Date and Time Picker in timemode 24h
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  // restrictToDayTime={true}
+  timemode="24h"
+  // maxPrev={5}
+  // maxNext={2}
+  // restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Date Picker with restric navigation
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  maxPrev={5}
+  maxNext={2}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Date Picker without Related Date
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate={false}
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  maxPrev={5}
+  maxNext={2}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Only Time Picker with 12h
+<DateTimePicker
+  includeDate={false}
+  includeTime={true}
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  // maxPrev={5}
+  // maxNext={2}
+  // restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Only Time Picker with 24h 
+<DateTimePicker
+  includeDate={false}
+  includeTime={true}
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="24h"
+  // maxPrev={5}
+  // maxNext={2}
+  // restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Only Time Picker with restrict time
+<DateTimePicker
+  includeDate={false}
+  includeTime={true}
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  // maxPrev={5}
+  // maxNext={2}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Su', lastday: 'Sa'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Restrict days to specific days
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Mo', lastday: 'Fr'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Restrict days to specific days and restrict navigation
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  maxPrev={5}
+  maxNext={2}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Mo', lastday: 'Fr'}}
+  dateFormat={'DD/MM/YYYY'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
+/>
+
+// Change placeholder format YYYY/DD/MM
+<DateTimePicker
+  includeDate={true}
+  includeTime={true}
+  includeRelativeDate
+  startPlaceholder={"Start Date & Time"}
+  endPlaceholder={"End Date & Time"}
+  restrictToDayTime={true}
+  timemode="12h"
+  maxPrev={5}
+  maxNext={2}
+  restrictTime={{starttime: 10, endtime: 20}}
+  restrictDays={{firstday: 'Mo', lastday: 'Fr'}}
+  dateFormat={'YYYY/DD/MM'}
+  onDateChange={(data) => console.log('on data onchange', data)}
+  onTimeChange={(data) => console.log('on time change', data)}
 />
 ```
 
@@ -45,10 +225,10 @@ For detailed documentation, take a look into the [styleguide][]. The source code
 ## TimeInput Properties
 |Name|Type|Default|Description|
 |---|---|---|---|
-|range|`bool`|`false`|If true, its enable start and end date range picker.|
+|range|`bool`|`false`|Enable start and end date range picker.|
 |includeDate|`bool`|`false`|Enable daterangepicker in the date range.|
 |includeTime|`bool`|`false`|Enable timepicker in the date range.|
-|defaultValue|`Object`|`null`|This default value overrides initialTime and placeholder.|
+|defaultValue|`Object`|`null`|Default value overrides initialTime and placeholder.|
 |includeRelativeDate|`bool`|`false`|Enable related date in the date range.|
 |startPlaceholder|`Object`|`null`|State date placeholder text.|
 |endPlaceholder|`Object`|`null`|End date placeholder text.|
@@ -61,9 +241,6 @@ For detailed documentation, take a look into the [styleguide][]. The source code
 |onChange|`function`|`null`|function return selected date and time range value.|
 
 Note: `TimeInput` behaves like Material-UI's `Input` component and can be used inside `FormControl`s.
-
-## License
-The files included in this repository are licensed under the MIT license.
 
 [time-picker-spec]: https://material.io/guidelines/components/pickers.html#pickers-time-pickers
 [material-ui]: https://material-ui.com/
